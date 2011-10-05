@@ -1,0 +1,56 @@
+Direct3D:
+    Version:  Direct3D 9.0c [ati2dvag.dll 6.14.10.6925]
+    Renderer: ATI Radeon 9550 / X1050 Series
+    Vendor:   ATI
+    VRAM:     128 MB (via registry)
+    Caps:     Shader=20 DepthRT=1 NativeDepth=1 NativeShadow=0 DF16=1 DF24=0 INTZ=0 RAWZ=0 NULL=0 RESZ=0 SlowINTZ=0
+desktop: 1680x1050 60Hz; virtual: 1680x1050 at 0,0
+<I> Initializing (RawInput).
+<RI> Input initialized.
+Non platform assembly: data-024816A0 (this message is harmless)
+Non platform assembly: data-024E8460 (this message is harmless)
+Non platform assembly: data-024EBA68 (this message is harmless)
+Non platform assembly: data-024F2C80 (this message is harmless)
+No link to Level Status
+UnityEngine.Debug:Internal_Log(Int32, String, Object)
+UnityEngine.Debug:Log(Object)
+ThirdPersonStatus:Awake()
+ 
+(Filename: C:/BuildAgent/work/842f9557127e852/Runtime/ExportGenerated/StandalonePlayer/UnityEngineDebug.cpp Line: 34)
+
+The character you would like to control doesn't have animations. Moving her might look weird.
+UnityEngine.Debug:Internal_Log(Int32, String, Object)
+UnityEngine.Debug:Log(Object)
+ThirdPersonController:Awake()
+ 
+(Filename: C:/BuildAgent/work/842f9557127e852/Runtime/ExportGenerated/StandalonePlayer/UnityEngineDebug.cpp Line: 34)
+
+No idle animation found. Turning off animations.
+UnityEngine.Debug:Internal_Log(Int32, String, Object)
+UnityEngine.Debug:Log(Object)
+ThirdPersonController:Awake()
+ 
+(Filename: C:/BuildAgent/work/842f9557127e852/Runtime/ExportGenerated/StandalonePlayer/UnityEngineDebug.cpp Line: 34)
+
+No walk animation found. Turning off animations.
+UnityEngine.Debug:Internal_Log(Int32, String, Object)
+UnityEngine.Debug:Log(Object)
+ThirdPersonController:Awake()
+ 
+(Filename: C:/BuildAgent/work/842f9557127e852/Runtime/ExportGenerated/StandalonePlayer/UnityEngineDebug.cpp Line: 34)
+
+No run animation found. Turning off animations.
+UnityEngine.Debug:Internal_Log(Int32, String, Object)
+UnityEngine.Debug:Log(Object)
+ThirdPersonController:Awake()
+ 
+(Filename: C:/BuildAgent/work/842f9557127e852/Runtime/ExportGenerated/StandalonePlayer/UnityEngineDebug.cpp Line: 34)
+
+No jump animation found and the character has canJump enabled. Turning off animations.
+UnityEngine.Debug:Internal_Log(Int32, String, Object)
+UnityEngine.Debug:Log(Object)
+ThirdPersonController:Awake()
+ 
+(Filename: C:/BuildAgent/work/842f9557127e852/Runtime/ExportGenerated/StandalonePlayer/UnityEngineDebug.cpp Line: 34)
+
+Platform assembly: D:\Desktop\MIF\GAMEDEV\abc\aaa_Data\Managed\Boo.Lang.dll (this message is harmless)
