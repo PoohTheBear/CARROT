@@ -1,7 +1,3 @@
-
-// Require a character controller to be attached to the same game object
-@script RequireComponent(CharacterController)
-
 public var idleAnimation : AnimationClip;
 public var walkAnimation : AnimationClip;
 public var runAnimation : AnimationClip;
@@ -13,37 +9,29 @@ public var runMaxAnimationSpeed : float = 1.0;
 public var jumpAnimationSpeed : float = 1.15;
 public var landAnimationSpeed : float = 1.0;
 
-private var _animation : Animation;
-
-enum CharacterState {
-	Idle = 0,
-	Walking = 1,
-	Trotting = 2,
-	Running = 3,
-	Jumping = 4,
-}
-
-private var _characterState : CharacterState;
-
-var runSpeed = 4.0;
+var runSpeed = 6.0;
 var dashSpeed = 10.0;
 
 var inAirControlAcceleration = 3.0;
 
 // How high do we jump when pressing jump and letting go immediately
 var jumpHeight = 0.5;
+var canPowerJump = false;
+// We add extraJumpHeight meters on top when holding the button down longer while jumping
+var powerJumpHeight = 2.5;
 
 // The gravity for the character
 var gravity = 20.0;
 // The gravity in controlled descent mode
+var canGlide = false;
+var glideGravity = 2.0;
 var speedSmoothing = 10.0;
 var rotateSpeed = 500.0;
-var trotAfterSeconds = 3.0;
 
 var canJump = true;
-var dashDistance = 3;
 
 private var jumpRepeatTime = 0.05;
+private var wallJumpTimeout = 0.15;
 private var jumpTimeout = 0.15;
 private var groundedTimeout = 0.25;
 
@@ -61,11 +49,13 @@ private var moveSpeed = 0.0;
 private var collisionFlags : CollisionFlags; 
 
 // Are we jumping? (Initiated with jump button and not grounded yet)
-private var jumping = true;
+private var jumping = false;
 private var jumpingReachedApex = false;
 
 // Are we moving backwards (This locks the camera to not do a 180 degree spin)
 private var movingBack = false;
+private var v;
+private var h;
 // Is the user pressing any keys?
 private var isMoving = false;
 // When did the user start walking (Used for going into trot after a while)
@@ -74,23 +64,28 @@ private var walkTimeStart = 0.0;
 private var lastJumpButtonTime = -10.0;
 // Last time we performed a jump
 private var lastJumpTime = -1.0;
-
+// Average normal of the last touched geometry
+private var wallJumpContactNormal : Vector3;
+private var wallJumpContactNormalHeight : float;
 
 // the height we jumped from (Used to determine for how long to apply extra jump power after jumping.)
 private var lastJumpStartHeight = 0.0;
-
+// When did we touch the wall the first time during this jump (Used for wall jumping)
+private var touchWallJumpTime = -1.0;
 
 private var inAirVelocity = Vector3.zero;
 
 private var lastGroundedTime = 0.0;
 
+private var lean = 0.0;
+private var slammed = false;
 
 private var isControllable = true;
 
-private var canDoubleJump = true;
+var canDoubleJump = true;
 private var jumpsAvailable = 0;
 private var didDoubleJump = false;
-private var canDash = true;
+var canDash = true;
 private var startedDashing = 0.0;
 private var didDash = false;
 private var lastVerticalButtonPressed = 0.0;
@@ -99,17 +94,10 @@ private var lastVerticalValue = 0.0;
 function Awake ()
 {
 	moveDirection = transform.TransformDirection(Vector3.forward);
-	
 	_animation = GetComponent(Animation);
 	if(!_animation)
 		Debug.Log("The character you would like to control doesn't have animations. Moving her might look weird.");
 	
-	/*
-public var idleAnimation : AnimationClip;
-public var walkAnimation : AnimationClip;
-public var runAnimation : AnimationClip;
-public var jumpPoseAnimation : AnimationClip;	
-	*/
 	if(!idleAnimation) {
 		_animation = null;
 		Debug.Log("No idle animation found. Turning off animations.");
@@ -125,7 +113,26 @@ public var jumpPoseAnimation : AnimationClip;
 	if(!jumpPoseAnimation && canJump) {
 		_animation = null;
 		Debug.Log("No jump animation found and the character has canJump enabled. Turning off animations.");
-	}			
+	}
+}
+
+// This next function responds to the "HidePlayer" message by hiding the player. 
+// The message is also 'replied to' by identically-named functions in the collision-handling scripts.
+// - Used by the LevelStatus script when the level completed animation is triggered.
+
+function HidePlayer()
+{
+	GameObject.Find("rootJoint").GetComponent(SkinnedMeshRenderer).enabled = false; // stop rendering the player.
+	isControllable = false;	// disable player controls.
+}
+
+// This is a complementary function to the above. We don't use it in the tutorial, but it's included for
+// the sake of completeness. (I like orthogonal APIs; so sue me!)
+
+function ShowPlayer()
+{
+	GameObject.Find("rootJoint").GetComponent(SkinnedMeshRenderer).enabled = true; // start rendering the player again.
+	isControllable = true;	// allow player to control the character again.
 }
 
 
@@ -143,8 +150,8 @@ function UpdateSmoothedMovementDirection ()
 	// Always orthogonal to the forward vector
 	var right = Vector3(forward.z, 0, -forward.x);
 
-	var v = Input.GetAxisRaw("Vertical");
-	var h = Input.GetAxisRaw("Horizontal");
+	v = Input.GetAxisRaw("Vertical");
+	h = Input.GetAxisRaw("Horizontal");
 
 	// Are we moving backwards or looking backwards
 	if (v < -0.2)
@@ -165,17 +172,27 @@ function UpdateSmoothedMovementDirection ()
 		lockCameraTimer += Time.deltaTime;
 		if (isMoving != wasMoving)
 			lockCameraTimer = 0.0;
+			
 
 		// We store speed and direction seperately,
 		// so that when the character stands still we still have a valid forward direction
 		// moveDirection is always normalized, and we only update it if there is user input.
 		if (targetDirection != Vector3.zero)
 		{
-			// If we are really slow, just snap to the target direction
-			if (moveSpeed < runSpeed * 0.9 && grounded)
-			{
-				moveDirection = targetDirection.normalized;
+			if (v < 0) {
+				moveDirection = Vector3.RotateTowards(moveDirection, -targetDirection, rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
+				moveDirection = moveDirection.normalized;
+				
 			}
+			else if (v == 0 && h != 0) {
+				moveDirection = Vector3.RotateTowards(moveDirection, (h*right), rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
+				moveDirection = moveDirection.normalized;
+			}
+			// If we are really slow, just snap to the target direction
+			else if (moveSpeed < runSpeed * 0.9 && grounded)
+			{				
+				moveDirection = targetDirection.normalized;
+							}
 			// Otherwise smoothly turn towards it
 			else
 			{
@@ -192,8 +209,6 @@ function UpdateSmoothedMovementDirection ()
 		//* We want to support analog input but make sure you cant walk faster diagonally than just forward or sideways
 		var targetSpeed = Mathf.Min(targetDirection.magnitude, 1.0);
 	
-		_characterState = CharacterState.Idle;
-		
 		// Pick speed modifier
 		if(Time.time - startedDashing <= 1.0){
 			targetSpeed *= dashSpeed;
@@ -205,9 +220,6 @@ function UpdateSmoothedMovementDirection ()
 		
 		moveSpeed = Mathf.Lerp(moveSpeed, targetSpeed, curSmooth);
 		
-		// Reset walk time start when we slow down
-		if (moveSpeed < runSpeed * 0.3)
-			walkTimeStart = Time.time;
 	}
 	// In air controls
 	else
@@ -223,7 +235,6 @@ function UpdateSmoothedMovementDirection ()
 
 		
 }
-
 
 function ApplyJumping ()
 {
@@ -265,6 +276,8 @@ function ApplyGravity ()
 		// Apply gravity
 		var jumpButton = Input.GetButton("Jump");
 		
+		// * When falling down we use controlledDescentGravity (only when holding down jump)
+		var controlledDescent = canGlide && verticalSpeed <= 0.0 && jumpButton && jumping;
 		
 		// When we reach the apex of the jump we send out a message
 		if (jumping && !jumpingReachedApex && verticalSpeed <= 0.0)
@@ -273,7 +286,15 @@ function ApplyGravity ()
 			SendMessage("DidJumpReachApex", SendMessageOptions.DontRequireReceiver);
 		}
 	
-		if (IsGrounded ())
+		// * When jumping up we don't apply gravity for some time when the user is holding the jump button
+		//   This gives more control over jump height by pressing the button longer
+		var extraPowerJump =  IsJumping () && verticalSpeed > 0.0 && jumpButton && transform.position.y < lastJumpStartHeight + powerJumpHeight;
+		
+		if (controlledDescent)			
+			verticalSpeed -= glideGravity * Time.deltaTime;
+		else if (extraPowerJump && canPowerJump)
+			return;
+		else if (IsGrounded ())
 			verticalSpeed = 0.0;
 		else
 			verticalSpeed -= gravity * Time.deltaTime;
@@ -338,68 +359,31 @@ function Update() {
 	ApplyJumping ();
 	
 	// Calculate actual motion
-	var movement = moveDirection * moveSpeed + Vector3 (0, verticalSpeed, 0) + inAirVelocity;
+	var movement;
+	if (v < 0) {
+		movement = -moveDirection * moveSpeed * 0.3 + Vector3 (0, verticalSpeed, 0) + inAirVelocity;
+	}
+	else {
+		movement = moveDirection * moveSpeed + Vector3 (0, verticalSpeed, 0) + inAirVelocity;
+	}
+	//var movement = moveDirection * moveSpeed + Vector3 (0, verticalSpeed, 0) + inAirVelocity;
 	movement *= Time.deltaTime;
 	
 	// Move the controller
 	var controller : CharacterController = GetComponent(CharacterController);
+	wallJumpContactNormal = Vector3.zero;
 	collisionFlags = controller.Move(movement);
 	
-	// ANIMATION sector
-	if(_animation) {
-		if(_characterState == CharacterState.Jumping) 
-		{
-			if(!jumpingReachedApex) {
-				_animation[jumpPoseAnimation.name].speed = jumpAnimationSpeed;
-				_animation[jumpPoseAnimation.name].wrapMode = WrapMode.ClampForever;
-				_animation.CrossFade(jumpPoseAnimation.name);
-			} else {
-				_animation[jumpPoseAnimation.name].speed = -landAnimationSpeed;
-				_animation[jumpPoseAnimation.name].wrapMode = WrapMode.ClampForever;
-				_animation.CrossFade(jumpPoseAnimation.name);				
-			}
-		} 
-		else 
-		{
-			if(controller.velocity.sqrMagnitude < 0.1) {
-				_animation.CrossFade(idleAnimation.name);
-			}
-			else 
-			{
-				if(_characterState == CharacterState.Running) {
-					_animation[runAnimation.name].speed = Mathf.Clamp(controller.velocity.magnitude, 0.0, runMaxAnimationSpeed);
-					_animation.CrossFade(runAnimation.name);	
-				}
-				else if(_characterState == CharacterState.Trotting) {
-					_animation[walkAnimation.name].speed = Mathf.Clamp(controller.velocity.magnitude, 0.0, trotMaxAnimationSpeed);
-					_animation.CrossFade(walkAnimation.name);	
-				}
-				else if(_characterState == CharacterState.Walking) {
-					_animation[walkAnimation.name].speed = Mathf.Clamp(controller.velocity.magnitude, 0.0, walkMaxAnimationSpeed);
-					_animation.CrossFade(walkAnimation.name);	
-				}
-				
-			}
-		}
-	}
-	// ANIMATION sector
-	
 	// Set rotation to the move direction
-	if (IsGrounded())
-	{
-		
-		transform.rotation = Quaternion.LookRotation(moveDirection);
-			
-	}	
-	else
-	{
-		var xzMove = movement;
-		xzMove.y = 0;
-		if (xzMove.sqrMagnitude > 0.001)
+	if (!jumping) {
+		if(slammed) // we got knocked over by an enemy. We need to reset some stuff
 		{
-			transform.rotation = Quaternion.LookRotation(xzMove);
+			slammed = false;
+			controller.height = 2;
+			transform.position.y += 0.75;
 		}
-	}	
+		transform.rotation = Quaternion.LookRotation(moveDirection);	
+	}
 	
 	// We are in jump mode but just became grounded
 	if (IsGrounded())
@@ -419,6 +403,7 @@ function OnControllerColliderHit (hit : ControllerColliderHit )
 //	Debug.DrawRay(hit.point, hit.normal);
 	if (hit.moveDirection.y > 0.01) 
 		return;
+	wallJumpContactNormal = hit.normal;
 }
 
 function GetSpeed () {
@@ -426,11 +411,40 @@ function GetSpeed () {
 }
 
 function IsJumping () {
-	return jumping;
+	return jumping && !slammed;
 }
 
 function IsGrounded () {
 	return (collisionFlags & CollisionFlags.CollidedBelow) != 0;
+}
+
+function SuperJump (height : float)
+{
+	verticalSpeed = CalculateJumpVerticalSpeed (height);
+	collisionFlags = CollisionFlags.None;
+	SendMessage("DidJump", SendMessageOptions.DontRequireReceiver);
+}
+
+function SuperJump (height : float, jumpVelocity : Vector3)
+{
+	verticalSpeed = CalculateJumpVerticalSpeed (height);
+	inAirVelocity = jumpVelocity;
+	
+	collisionFlags = CollisionFlags.None;
+	SendMessage("DidJump", SendMessageOptions.DontRequireReceiver);
+}
+
+function Slam (direction : Vector3)
+{
+	verticalSpeed = CalculateJumpVerticalSpeed (1);
+	inAirVelocity = direction * 6;
+	direction.y = 0.6;
+	Quaternion.LookRotation(-direction);
+	var controller : CharacterController = GetComponent(CharacterController);
+	controller.height = 0.5;
+	slammed = true;
+	collisionFlags = CollisionFlags.None;
+	SendMessage("DidJump", SendMessageOptions.DontRequireReceiver);
 }
 
 function GetDirection () {
@@ -459,6 +473,13 @@ function HasJumpReachedApex ()
 function IsGroundedWithTimeout ()
 {
 	return lastGroundedTime + groundedTimeout > Time.time;
+}
+
+function IsGliding ()
+{
+	// * When falling down we use controlledDescentGravity (only when holding down jump)
+	var jumpButton = Input.GetButton("Jump");
+	return canGlide && verticalSpeed <= 0.0 && jumpButton && jumping;
 }
 
 function Reset ()
@@ -500,3 +521,6 @@ function GetStartedDashing()
 {
 	return startedDashing;
 }
+// Require a character controller to be attached to the same game object
+@script RequireComponent(CharacterController)
+@script AddComponentMenu("Third Person Player/Third Person Controller")
