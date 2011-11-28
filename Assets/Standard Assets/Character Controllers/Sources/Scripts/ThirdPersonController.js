@@ -288,7 +288,7 @@ function DidJump ()
 
 function Update() {
 	
-	if (!isControllable)
+	/*if (!isControllable)
 	{
 		// kill all inputs if not controllable.
 		Input.ResetInputAxes();
@@ -299,7 +299,7 @@ function Update() {
 		lastJumpButtonTime = Time.time;
 	}
 
-	UpdateSmoothedMovementDirection();
+	UpdateSmoothedMovementDirection();*/
 	
 	// Apply gravity
 	// - extra power jump modifies gravity
@@ -309,6 +309,7 @@ function Update() {
 	// Apply jumping logic
 	ApplyJumping ();
 	
+	
 	// Calculate actual motion
 	var movement = moveDirection * moveSpeed + Vector3 (0, verticalSpeed, 0) + inAirVelocity;
 	movement *= Time.deltaTime;
@@ -317,7 +318,7 @@ function Update() {
 	var controller : CharacterController = GetComponent(CharacterController);
 	collisionFlags = controller.Move(movement);
 	
-	// ANIMATION sector
+	/*// ANIMATION sector
 	if(_animation) {
 		if(_characterState == CharacterState.Jumping) 
 		{
@@ -383,7 +384,7 @@ function Update() {
 			jumping = false;
 			SendMessage("DidLand", SendMessageOptions.DontRequireReceiver);
 		}
-	}
+	}*/
 }
 
 function OnControllerColliderHit (hit : ControllerColliderHit )

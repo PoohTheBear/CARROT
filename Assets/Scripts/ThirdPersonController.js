@@ -153,6 +153,13 @@ function UpdateSmoothedMovementDirection ()
 	v = Input.GetAxisRaw("Vertical");
 	h = Input.GetAxisRaw("Horizontal");
 
+	// Reverses turning side during backward moving
+	if (v < 0) {
+		h *= -1;
+	}
+
+	//Debug.Log("vertical = " + v + "horizontal = " + h);
+
 	// Are we moving backwards or looking backwards
 	if (v < -0.2)
 		movingBack = true;
@@ -358,6 +365,10 @@ function Update() {
 	// Apply jumping logic
 	ApplyJumping ();
 	
+	if (v == 0) {
+		moveSpeed = 0;
+	}
+	
 	// Calculate actual motion
 	var movement;
 	if (v < 0) {
@@ -379,7 +390,7 @@ function Update() {
 		if(slammed) // we got knocked over by an enemy. We need to reset some stuff
 		{
 			slammed = false;
-			controller.height = 2;
+			//controller.height = 2;
 			transform.position.y += 0.75;
 		}
 		transform.rotation = Quaternion.LookRotation(moveDirection);	
@@ -441,7 +452,8 @@ function Slam (direction : Vector3)
 	direction.y = 0.6;
 	Quaternion.LookRotation(-direction);
 	var controller : CharacterController = GetComponent(CharacterController);
-	controller.height = 0.5;
+	Debug.Log(controller.height);
+	//controller.height = 0.5;
 	slammed = true;
 	collisionFlags = CollisionFlags.None;
 	SendMessage("DidJump", SendMessageOptions.DontRequireReceiver);
