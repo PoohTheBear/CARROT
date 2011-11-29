@@ -6,7 +6,7 @@ var attackDistance = 17.0;
 var visionDistance = 17.0;
 var damage = 1;
 var attackSpeed = 5.0;
-var burrowTime = 1.0;
+var burrowTime = 0.3;
 var isBurrowed = false;
 var startScale = Vector3(1,1,1);
 var baseY = 0;
@@ -80,7 +80,8 @@ function ToggleBurrow () {
 	burrowingParticles.emit = true;
 	
 	var start = startScale;
-	var end = Vector3(0.1, 0.1, 0.1);
+	var end = startScale;
+	end.y = 0.1;
 	var time = burrowTime;
 	if (isBurrowed) {
 		time = 0;
