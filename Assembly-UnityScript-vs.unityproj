@@ -44,11 +44,11 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\AIScript.js" />
-     <Compile Include="Assets\HeadBumpTrigger.js" />
+     <Compile Include="Assets\Scripts\AIScript.js" />
      <Compile Include="Assets\Scripts\DashParticleController.js" />
      <Compile Include="Assets\Scripts\DoubleJumpParticleController.js" />
      <Compile Include="Assets\Scripts\FalloutDeath.js" />
+     <Compile Include="Assets\Scripts\HeadBumpTrigger.js" />
      <Compile Include="Assets\Scripts\LevelStatus.js" />
      <Compile Include="Assets\Scripts\Respawn.js" />
      <Compile Include="Assets\Scripts\ThirdPersonController.js" />
