@@ -256,10 +256,10 @@ function ApplyJumping ()
 		jumpsAvailable = 1;
 	}
 		
-	if(!IsJumping() && verticalSpeed < -2.0 && canDoubleJump) {
+	if(!IsJumping() && !IsSlammed() && verticalSpeed < -2.0 && canDoubleJump) {
 		jumpsAvailable = 1;
 	}
-	else if (!IsJumping() && verticalSpeed < -2.0) {
+	else if (!IsJumping() && !IsSlammed() && verticalSpeed < -2.0) {
 		jumpsAvailable = 0;
 	}
 
@@ -389,7 +389,6 @@ function Update() {
 	if (!jumping) {
 		if(slammed) // we got knocked over by an enemy. We need to reset some stuff
 		{
-			slammed = false;
 			//controller.height = 2;
 			transform.position.y += 0.75;
 		}
@@ -401,6 +400,7 @@ function Update() {
 	{
 		lastGroundedTime = Time.time;
 		inAirVelocity = Vector3.zero;
+		slammed = false;
 		if (jumping)
 		{
 			jumping = false;
@@ -422,7 +422,11 @@ function GetSpeed () {
 }
 
 function IsJumping () {
-	return jumping && !slammed;
+	return jumping;
+}
+
+function IsSlammed() {
+	return slammed;
 }
 
 function IsGrounded () {
@@ -454,6 +458,7 @@ function Slam (direction : Vector3)
 	var controller : CharacterController = GetComponent(CharacterController);
 	Debug.Log(controller.height);
 	//controller.height = 0.5;
+	jumpsAvailable--;
 	slammed = true;
 	collisionFlags = CollisionFlags.None;
 	SendMessage("DidJump", SendMessageOptions.DontRequireReceiver);

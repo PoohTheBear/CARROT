@@ -74,17 +74,19 @@ function Die ()
 	lives--;
 	health = maxHealth;
 	
-	if(lives < 0)
-		Application.LoadLevel("GameOver");	
+	if (this.tag == "Player") {
+		if(lives < 0) {
+			Application.LoadLevel("GameOver");	
+		}
+		// If we've reached here, the player still has lives remaining, so respawn.
+		respawnPosition = Respawn.currentRespawn.transform.position;
+		// Relocate the player. We need to do this or the camera will keep trying to focus on the (invisible) player where he's standing on top of the FalloutDeath box collider.
+		transform.position = respawnPosition + Vector3.up;
 	
-	// If we've reached here, the player still has lives remaining, so respawn.
-	respawnPosition = Respawn.currentRespawn.transform.position;
-	//Camera.main.transform.position = respawnPosition - (transform.forward * 4) + Vector3.up;	// reset camera too
+		Camera.main.transform.position = respawnPosition - (transform.forward * 4) + Vector3.up;	// reset camera too
+	}
 	// Hide the player briefly to give the death sound time to finish...
 	//SendMessage("HidePlayer");
-	
-	// Relocate the player. We need to do this or the camera will keep trying to focus on the (invisible) player where he's standing on top of the FalloutDeath box collider.
-	transform.position = respawnPosition + Vector3.up;
 
 	//yield WaitForSeconds(1.6);	// give the sound time to complete. 
 	

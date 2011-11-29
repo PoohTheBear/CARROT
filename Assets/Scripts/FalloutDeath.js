@@ -1,8 +1,9 @@
 
 function OnTriggerEnter (other : Collider)
 {
+
 	// Player fall out!
-	if (other.GetComponent (ThirdPersonStatus))
+	if (other.tag == "Player")
 	{
 		other.GetComponent (ThirdPersonStatus).FalloutDeath();
 	}
