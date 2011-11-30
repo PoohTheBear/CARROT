@@ -90,6 +90,7 @@ private var startedDashing = 0.0;
 private var didDash = false;
 private var lastVerticalButtonPressed = 0.0;
 private var lastVerticalValue = 0.0;
+var canPunch = true;
 
 function Awake ()
 {
@@ -451,17 +452,16 @@ function SuperJump (height : float, jumpVelocity : Vector3)
 
 function Slam (direction : Vector3)
 {
-	verticalSpeed = CalculateJumpVerticalSpeed (1);
-	inAirVelocity = direction * 6;
-	direction.y = 0.6;
-	Quaternion.LookRotation(-direction);
-	var controller : CharacterController = GetComponent(CharacterController);
-	Debug.Log(controller.height);
-	//controller.height = 0.5;
-	jumpsAvailable--;
-	slammed = true;
-	collisionFlags = CollisionFlags.None;
-	SendMessage("DidJump", SendMessageOptions.DontRequireReceiver);
+	if (transform.gameObject.GetComponent(ThirdPersonStatus).health != transform.gameObject.GetComponent(ThirdPersonStatus).maxHealth) {
+		verticalSpeed = CalculateJumpVerticalSpeed (1);
+		inAirVelocity = direction * 6;
+		direction.y = 0.6;
+		Quaternion.LookRotation(-direction);
+		jumpsAvailable--;
+		slammed = true;
+		collisionFlags = CollisionFlags.None;
+		SendMessage("DidJump", SendMessageOptions.DontRequireReceiver);
+	}
 }
 
 function GetDirection () {

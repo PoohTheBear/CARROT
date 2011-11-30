@@ -15,6 +15,8 @@ var damageDealt = 1; // Per hit
 var maxTimeWthoutUnburrow = 5;
 var idleTime = 3;
 
+private var gotBumped = false;
+
 private var characterController : CharacterController;
 	characterController = GetComponent(CharacterController);
 
@@ -112,6 +114,8 @@ function ToggleBurrow () {
 	isBurrowed = !isBurrowed;
 	burrowingParticles.emit = false;
 	burrowedParticles.emit = isBurrowed;
+	if(!isBurrowed)
+		gotBumped = false;
 	
 	inAction = false;
 }
@@ -140,8 +144,9 @@ function Idle (seconds) {
 }
 
 function HeadBump () {
-	if (!isBurrowed) {
+	if (transform.localScale == startScale && !gotBumped && !inAction) {
 		SendMessage("ApplyDamage", damageDealt);
+		gotBumped = true;
 		Slam(false);
 	}
 }
