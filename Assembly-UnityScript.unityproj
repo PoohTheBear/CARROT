@@ -45,10 +45,13 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\AIScript.js" />
+     <Compile Include="Assets\Scripts\CreditsGUI.js" />
      <Compile Include="Assets\Scripts\DashParticleController.js" />
      <Compile Include="Assets\Scripts\DoubleJumpParticleController.js" />
      <Compile Include="Assets\Scripts\FalloutDeath.js" />
      <Compile Include="Assets\Scripts\GameHUD.js" />
+     <Compile Include="Assets\Scripts\GameOverLoseGUI.js" />
+     <Compile Include="Assets\Scripts\GameOverWinGUI.js" />
      <Compile Include="Assets\Scripts\HeadBumpTrigger.js" />
      <Compile Include="Assets\Scripts\LevelStatus.js" />
      <Compile Include="Assets\Scripts\ObjectRotator.js" />

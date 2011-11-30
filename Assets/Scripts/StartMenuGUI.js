@@ -17,7 +17,7 @@ function OnGUI () {
 	backgroundStyle.normal.background = background;
 	GUI.Label( Rect((Screen.width - (Screen.height*2))*0.75,0,Screen.height*2, Screen.height),"",backgroundStyle);
 
-	GUI.Label( Rect((Screen.width/2)-280,50,400,100),"Codename C.A.R.R.O.T.","mainMenuTitle");
+	GUI.Label( Rect((Screen.width/2)-200,50,400,100),"Codename C.A.R.R.O.T.","mainMenuTitle");
 
 	if(GUI.Button( Rect((Screen.width/2)-70,Screen.height-180,140,50),"Play")) {
 		isLoading = true;
@@ -37,6 +37,6 @@ function OnGUI () {
 	}
 	
 	if (isLoading)
-		GUI.Label ( Rect( (Screen.width/2)-110, (Screen.height / 2) - 60, 400, 70),
+		GUI.Label ( Rect( (Screen.width/2)-200, (Screen.height / 2) - 60, 400, 70),
 			"Loading...", "mainMenuTitle");
 }

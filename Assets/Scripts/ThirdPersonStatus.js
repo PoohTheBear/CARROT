@@ -80,7 +80,7 @@ function Die ()
 	
 	if (this.tag == "Player") {
 		if(lives < 0) {
-			Application.LoadLevel("GameOver");	
+			Application.LoadLevel("GameOverLose");	
 		}
 		// If we've reached here, the player still has lives remaining, so respawn.
 		respawnPosition = Respawn.currentRespawn.transform.position;
