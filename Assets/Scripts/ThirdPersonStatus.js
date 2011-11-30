@@ -74,6 +74,10 @@ function Die ()
 	lives--;
 	health = maxHealth;
 	
+	if(lives < 0) {
+		Destroy(transform.gameObject);
+	}
+	
 	if (this.tag == "Player") {
 		if(lives < 0) {
 			Application.LoadLevel("GameOver");	

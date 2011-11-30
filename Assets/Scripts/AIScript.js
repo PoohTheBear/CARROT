@@ -9,6 +9,7 @@ var attackSpeed = 5.0;
 var burrowTime = 0.3;
 var isBurrowed = false;
 var startScale = Vector3(1,1,1);
+var startPosition = 0.0;
 var baseY = 0;
 var damageDealt = 1; // Per hit
 var maxTimeWthoutUnburrow = 5;
@@ -22,13 +23,11 @@ var burrowedParticles : ParticleEmitter;
 var burrowingParticles : ParticleEmitter;
 var target : Transform;
 var status : ThirdPersonStatus;
-var startingMesh : Mesh;
 
 function Start () {
 
 	startScale = transform.localScale;
-
-	startingMesh = GetComponent(MeshFilter).mesh;
+	startPosition = transform.position.y;
 
 	levelStateMachine = FindObjectOfType(LevelStatus);
 	if (!levelStateMachine)
@@ -79,26 +78,35 @@ function ToggleBurrow () {
 	inAction = true;
 	burrowingParticles.emit = true;
 	
-	var start = startScale;
-	var end = startScale;
-	end.y = 0.1;
+	var start = transform.position;
+	var end = start;
+	var height = characterController.height;
+	end.y -= height;
 	var time = burrowTime;
 	if (isBurrowed) {
 		time = 0;
-		transform.position.y += 1;
-		start = transform.localScale;
-		end = startScale;
+		start = transform.position;
+		end = start;
+		end.y = startPosition;
 	}
 	else {
 		// Burrowing
 	}
+		
 	yield TransformScale(start, end, time);
 	
+	
+	var mrs = GetComponentsInChildren(MeshRenderer);
+	
 	if (!isBurrowed) {
-		GetComponent(MeshFilter).mesh = null;
+		for(var renderer in mrs) {
+			renderer.enabled = false;
+		}
 	}
 	else {
-		GetComponent(MeshFilter).mesh = startingMesh;
+		for(var renderer in mrs) {
+			renderer.enabled = true;
+		}
 	}
 	
 	isBurrowed = !isBurrowed;
@@ -111,16 +119,19 @@ function ToggleBurrow () {
 function TransformScale (start, end, time) {
 	
 	if (time == 0) {
-		transform.localScale = Vector3.Lerp(start, end, 1);
+		transform.position = Vector3.Lerp(start, end, 1);
+		transform.localScale = startScale;
 	}
 	else {
 		var t = 0.0;
 		while (t < 1.0) {
 		    t += Time.deltaTime / time;
-		    transform.localScale = Vector3.Lerp(start, end, t);
+		    transform.position = Vector3.Lerp(start, end, t);
 		
 		    yield;
 		}
+		transform.position.y = startPosition;
+		transform.localScale = Vector3(0.1,0.1,0.1);
 	}
 }
 
@@ -142,6 +153,7 @@ function Move () {
 		if (!inAction) {
 	
 			var offset = transform.position - target.position;
+
 			//Debug.Log("Magnitude " + offset.magnitude);
 			
 			if (offset.magnitude > visionDistance) {
