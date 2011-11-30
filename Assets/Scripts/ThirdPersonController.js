@@ -91,6 +91,7 @@ private var didDash = false;
 private var lastVerticalButtonPressed = 0.0;
 private var lastVerticalValue = 0.0;
 var canPunch = true;
+var shouldPause = false;
 
 function Awake ()
 {
@@ -333,6 +334,9 @@ function Update() {
 	{
 		// kill all inputs if not controllable.
 		Input.ResetInputAxes();
+	}
+	if (Input.GetButtonDown	("Pause")) {
+		shouldPause = !shouldPause;
 	}
 
 	if (Input.GetButtonDown ("Jump"))
