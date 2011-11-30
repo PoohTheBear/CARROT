@@ -53,6 +53,7 @@
      <Compile Include="Assets\Scripts\LevelStatus.js" />
      <Compile Include="Assets\Scripts\ObjectRotator.js" />
      <Compile Include="Assets\Scripts\Respawn.js" />
+     <Compile Include="Assets\Scripts\StartMenuGUI.js" />
      <Compile Include="Assets\Scripts\ThirdPersonController.js" />
      <Compile Include="Assets\Scripts\ThirdPersonStatus.js" />
      <None Include="Assets\Standard Assets\Toon Shading\Sources\Shaders\Toony-Basic.shader" />

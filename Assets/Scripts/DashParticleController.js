@@ -1,8 +1,9 @@
 var dashParticleSystem : GameObject;
+var player : GameObject;
 
 function Start () {
 
-	var playerController : ThirdPersonController = GetComponent(ThirdPersonController);
+	var playerController : ThirdPersonController = player.GetComponent(ThirdPersonController);
 	
 	// The script ensures an AudioSource component is always attached.
 	

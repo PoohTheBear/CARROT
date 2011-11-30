@@ -4,10 +4,12 @@
 
 var nativeVerticalResolution = 1200.0;
 
+//lives;
+var liveImage: Texture2D;
+
 // health:
 var healthActiveImage: Texture2D;
 var healthInactiveImage: Texture2D;
-var healthImageOffsets: Vector2[];
 
 // poweups
 var spinachActiveImage: Texture2D;
@@ -39,17 +41,23 @@ function OnGUI ()
 {
 	// Health needs to be clamped to the number of pie segments we can show.
 	// We also need to check it's not negative, so we'll use the Mathf Clamp() function:
-	var healthCount = Mathf.Clamp(playerHealthInfo.health, 0, healthImageOffsets.length);
+	var healthCount = playerHealthInfo.health;
+	var liveCount = playerHealthInfo.lives;
 
 	// Our GUI is laid out for a 1920 x 1200 pixel display (16:10 aspect). The next line makes sure it rescales nicely to other resolutions.
 	GUI.matrix = Matrix4x4.TRS (Vector3(0, 0, 0), Quaternion.identity, Vector3 (Screen.height / nativeVerticalResolution, Screen.height / nativeVerticalResolution, 1)); 
 
+	//Lives info.
+	for (i=0; i<liveCount; i++) {
+		DrawImageTopAligned(Vector2(128*i,0), liveImage);
+	}
+
 	// Health info.
-	for (i=0; i<healthImageOffsets.length; i++) {
+	for (i=0; i<playerHealthInfo.maxHealth; i++) {
 		if (i < healthCount)
-			DrawImageTopAligned(healthImageOffsets[i], healthActiveImage);
+			DrawImageTopAligned(Vector2(64*(i%10),128+(64*(i/10))), healthActiveImage);
 		else
-			DrawImageTopAligned(healthImageOffsets[i], healthInactiveImage);
+			DrawImageTopAligned(Vector2(64*(i%10),128+(64*(i/10))), healthInactiveImage);
 	}	
 	
 	if (playerPowerupsInfo.canDash)
