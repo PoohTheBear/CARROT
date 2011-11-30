@@ -20,6 +20,6 @@ function OnGUI() {
 		
 	GUI.Label ( Rect( (Screen.width / 2) - 150, (Screen.height / 2) - 40 - (t*scrollSpeed), 300, 100), "Credits!", "mainMenuTitle");
 		
-	if(Input.anyKeyDown)
+	if(Input.anyKeyDown || ((Screen.height / 2) - 40 - (t*scrollSpeed) + 100) < 0)
 		Application.LoadLevel("StartMenu");		
 }
