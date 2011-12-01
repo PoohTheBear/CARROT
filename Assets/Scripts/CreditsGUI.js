@@ -41,11 +41,12 @@ function OnGUI() {
 	GUI.Label ( Rect(x - 150, y + 930, 300, 30), "http://www.3dxtras.com", "mainMenuInfo");
 	GUI.Label ( Rect(x - 150, y + 970, 300, 30), "http://thefree3dmodels.com", "mainMenuInfo");
 	GUI.Label ( Rect(x - 150, y + 1010, 300, 30), "http://www.3dtotal.com", "mainMenuInfo");
+	GUI.Label ( Rect(x - 150, y + 1050, 300, 30), "http://www.unitymagic.com", "mainMenuInfo");
 	
-	GUI.Label ( Rect(x - 150, y + 1140, 300, 50), "Idea", "mainMenuTitle");
-	GUI.Label ( Rect(x - 150, y + 1200, 300, 30), "Girvydas Bartkus", "mainMenuInfo");
-	GUI.Label ( Rect(x - 150, y + 1240, 300, 30), "Lukas Bendikas", "mainMenuInfo");
+	GUI.Label ( Rect(x - 150, y + 1180, 300, 50), "Idea", "mainMenuTitle");
+	GUI.Label ( Rect(x - 150, y + 1240, 300, 30), "Girvydas Bartkus", "mainMenuInfo");
+	GUI.Label ( Rect(x - 150, y + 1280, 300, 30), "Lukas Bendikas", "mainMenuInfo");
 		
-	if(Input.anyKeyDown || (y + 1240 + 30) < 0)
+	if(Input.anyKeyDown || (y + 1280 + 30) < 0)
 		Application.LoadLevel("StartMenu");		
 }
