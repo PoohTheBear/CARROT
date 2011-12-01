@@ -27,6 +27,7 @@ var gSkin: GUISkin;
 private var playerHealthInfo : ThirdPersonStatus;
 private var playerPowerupsInfo : ThirdPersonController;
 private var timeScale;
+private var enemyHealthLeft = 0.0;
 
 // Cache link to player's state management script for later use.
 function Awake()
@@ -48,9 +49,11 @@ function OnGUI ()
 		GUI.skin = gSkin;
 	else
 		Debug.Log("GameHUD: Skin Object missing!");
+		
+	var scaledResolutionWidth = nativeVerticalResolution / Screen.height * Screen.width;
 
-	// Health needs to be clamped to the number of pie segments we can show.
-	// We also need to check it's not negative, so we'll use the Mathf Clamp() function:
+	var onMolePlatform = playerPowerupsInfo.GetOnMolePlatform();
+	var mole = GameObject.FindGameObjectWithTag("Mole");
 	var pause = playerPowerupsInfo.shouldPause;
 	var healthCount = playerHealthInfo.health;
 	var liveCount = playerHealthInfo.lives;
@@ -86,7 +89,6 @@ function OnGUI ()
 		
 	if(pause) {
 		Time.timeScale = 0;
-		var scaledResolutionWidth = nativeVerticalResolution / Screen.height * Screen.width;
 		if (GUI.Button( Rect ((scaledResolutionWidth / 2) - 150, (nativeVerticalResolution / 2) - 160, 300, 100),"Resume")) {
 			playerPowerupsInfo.shouldPause = false;
 			Time.timeScale = timeScale;
@@ -106,6 +108,14 @@ function OnGUI ()
 		}
 	} else {
 		Time.timeScale = timeScale;
+	}
+	
+	if(onMolePlatform && mole != null) {
+		var moleStatus = mole.GetComponent(ThirdPersonStatus);
+		enemyHealthLeft = parseFloat(moleStatus.health) / moleStatus.maxHealth;
+		Debug.Log(enemyHealthLeft);
+		GUI.Label( Rect ((scaledResolutionWidth / 2) - 500, 100, 1000*enemyHealthLeft,20),"","healthBar");
+		GUI.Label( Rect ((scaledResolutionWidth / 2) - 500 + (1000*enemyHealthLeft), 100, 1000*(1-enemyHealthLeft),20),"","healthBarEmpty");
 	}
 }
 

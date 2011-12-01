@@ -92,6 +92,7 @@ private var lastVerticalButtonPressed = 0.0;
 private var lastVerticalValue = 0.0;
 var canPunch = true;
 var shouldPause = false;
+private var onMolePlatform = false;
 
 function Awake ()
 {
@@ -541,6 +542,16 @@ function GetDidDash()
 function GetStartedDashing()
 {
 	return startedDashing;
+}
+
+function GetOnMolePlatform()
+{
+	return onMolePlatform;
+}
+
+function SetOnMolePlatform(isOn : boolean)
+{
+	onMolePlatform = isOn;
 }
 // Require a character controller to be attached to the same game object
 @script RequireComponent(CharacterController)
