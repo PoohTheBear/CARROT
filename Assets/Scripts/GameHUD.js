@@ -22,14 +22,18 @@ var brocolliActiveImage: Texture2D;
 var brocolliInactiveImage: Texture2D;
 var brocolliOffset = Vector2(0, 0);
 
+var gSkin: GUISkin;
+
 private var playerHealthInfo : ThirdPersonStatus;
 private var playerPowerupsInfo : ThirdPersonController;
+private var timeScale;
 
 // Cache link to player's state management script for later use.
 function Awake()
 {
 	playerHealthInfo = GameObject.FindWithTag("Player").GetComponent(ThirdPersonStatus);
 	playerPowerupsInfo = GameObject.FindWithTag("Player").GetComponent(ThirdPersonController);
+	timeScale = Time.timeScale;
 
 	if (!playerHealthInfo)
 		Debug.Log("No link to player's state manager.");
@@ -39,8 +43,15 @@ function Awake()
 
 function OnGUI ()
 {
+
+	if(gSkin)
+		GUI.skin = gSkin;
+	else
+		Debug.Log("GameHUD: Skin Object missing!");
+
 	// Health needs to be clamped to the number of pie segments we can show.
 	// We also need to check it's not negative, so we'll use the Mathf Clamp() function:
+	var pause = playerPowerupsInfo.shouldPause;
 	var healthCount = playerHealthInfo.health;
 	var liveCount = playerHealthInfo.lives;
 
@@ -72,6 +83,30 @@ function OnGUI ()
 		DrawImageTopRightAligned(spinachOffset, spinachActiveImage);
 	else
 		DrawImageTopRightAligned(spinachOffset, spinachInactiveImage);
+		
+	if(pause) {
+		Time.timeScale = 0;
+		var scaledResolutionWidth = nativeVerticalResolution / Screen.height * Screen.width;
+		if (GUI.Button( Rect ((scaledResolutionWidth / 2) - 150, (nativeVerticalResolution / 2) - 160, 300, 100),"Resume")) {
+			playerPowerupsInfo.shouldPause = false;
+			Time.timeScale = timeScale;
+		}
+		if (GUI.Button( Rect ((scaledResolutionWidth / 2) - 150, (nativeVerticalResolution / 2) - 50, 300, 100),"Main Menu")) {
+			playerPowerupsInfo.shouldPause = false;
+			Time.timeScale = timeScale;
+			Application.LoadLevel("StartMenu");
+		}
+			
+		var isWebPlayer = (Application.platform == RuntimePlatform.OSXWebPlayer ||
+				Application.platform == RuntimePlatform.WindowsWebPlayer);
+		if (!isWebPlayer)
+		{
+			if (GUI.Button( Rect((scaledResolutionWidth / 2) - 150, (nativeVerticalResolution / 2) + 60, 300, 100), "Quit"))
+				Application.Quit();
+		}
+	} else {
+		Time.timeScale = timeScale;
+	}
 }
 
 function DrawImageTopAligned (pos : Vector2, image : Texture2D)
