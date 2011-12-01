@@ -304,7 +304,7 @@ function Update() {
 	// Apply gravity
 	// - extra power jump modifies gravity
 	// - controlledDescent mode modifies gravity
-	ApplyGravity ();
+	//ApplyGravity ();
 
 	// Apply jumping logic
 	ApplyJumping ();
@@ -438,4 +438,4 @@ function Reset ()
 {
 	gameObject.tag = "Player";
 }
-
+@script AddComponentMenu("Third Person Player/Third Person Controller Uncontrollable")

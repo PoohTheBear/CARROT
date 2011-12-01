@@ -452,16 +452,16 @@ function SuperJump (height : float, jumpVelocity : Vector3)
 
 function Slam (direction : Vector3)
 {
-	if (transform.gameObject.GetComponent(ThirdPersonStatus).health != transform.gameObject.GetComponent(ThirdPersonStatus).maxHealth) {
-		verticalSpeed = CalculateJumpVerticalSpeed (1);
-		inAirVelocity = direction * 6;
-		direction.y = 0.6;
-		Quaternion.LookRotation(-direction);
-		jumpsAvailable--;
-		slammed = true;
-		collisionFlags = CollisionFlags.None;
-		SendMessage("DidJump", SendMessageOptions.DontRequireReceiver);
-	}
+	//if (transform.gameObject.GetComponent(ThirdPersonStatus).health != transform.gameObject.GetComponent(ThirdPersonStatus).maxHealth) {
+	verticalSpeed = CalculateJumpVerticalSpeed (1);
+	inAirVelocity = direction * 6;
+	direction.y = 0.6;
+	Quaternion.LookRotation(-direction);
+	jumpsAvailable--;
+	slammed = true;
+	collisionFlags = CollisionFlags.None;
+	SendMessage("DidJump", SendMessageOptions.DontRequireReceiver);
+	//}
 }
 
 function GetDirection () {

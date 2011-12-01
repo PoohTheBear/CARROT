@@ -1,21 +1,20 @@
-var moveSpeed = 1;
+var moveSpeed = 1.0;
 var rotateSpeed = 10;
-var inAction = false;
-var attackTurnTime = 0.7;
-var attackDistance = 17.0;
+private var inAction = false;
+var attackDistance = 1.0;
 var visionDistance = 17.0;
 var damage = 1;
-var attackSpeed = 5.0;
 var burrowTime = 0.3;
-var isBurrowed = false;
-var startScale = Vector3(1,1,1);
+private var isBurrowed = false;
+private var canAttack = true;
+private var startScale = Vector3(1,1,1);
 var startPosition = 0.0;
-var baseY = 0;
-var damageDealt = 1; // Per hit
+var damageDealt = 1; // Per hit to mole
 var maxTimeWthoutUnburrow = 5;
 var idleTime = 3;
 
 private var gotBumped = false;
+private var baseY = 0;
 
 private var characterController : CharacterController;
 	characterController = GetComponent(CharacterController);
@@ -159,7 +158,7 @@ function Move () {
 	
 			var offset = transform.position - target.position;
 
-			//Debug.Log("Magnitude " + offset.magnitude);
+			Debug.Log("Magnitude " + offset.magnitude);
 			
 			if (offset.magnitude > visionDistance) {
 				yield Idle(1);
@@ -180,15 +179,20 @@ function Move () {
 			
 			if (angle < 10 && angle > -10) {
 				if (isBurrowed) {
+					Debug.Log("moving");
 					direction = transform.TransformDirection(Vector3.forward * moveSpeed);
-					characterController.SimpleMove(direction);
+					characterController.Move(direction);
 				}
 				else {
 					yield ToggleBurrow();
 				}
 			}
 			
-			if (isBurrowed && offset.magnitude < attackDistance) {
+			if (canAttack && isBurrowed && offset.magnitude < attackDistance) {
+				canAttack = false;
+				
+				StartCoroutine("AllowAttacking");
+				
 				time = 0;
 				yield ToggleBurrow();
 				
@@ -200,6 +204,10 @@ function Move () {
 	}
 }
 
+function AllowAttacking() {
+      yield WaitForSeconds(burrowTime * 2);
+      canAttack = true;
+}
 /*
 	animations played are:
 	idle, threaten, turnjump, attackrun
