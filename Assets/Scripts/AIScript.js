@@ -158,7 +158,7 @@ function Move () {
 	
 			var offset = transform.position - target.position;
 
-			Debug.Log("Magnitude " + offset.magnitude);
+			//Debug.Log("Magnitude " + offset.magnitude);
 			
 			if (offset.magnitude > visionDistance) {
 				yield Idle(1);

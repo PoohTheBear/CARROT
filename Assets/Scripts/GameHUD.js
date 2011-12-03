@@ -52,8 +52,8 @@ function OnGUI ()
 		
 	var scaledResolutionWidth = nativeVerticalResolution / Screen.height * Screen.width;
 
-	var onMolePlatform = playerPowerupsInfo.GetOnMolePlatform();
-	var mole = GameObject.FindGameObjectWithTag("Mole");
+	var onBossPlatform = playerPowerupsInfo.GetOnBossPlatform();
+	var boss = playerPowerupsInfo.GetBoss();
 	var pause = playerPowerupsInfo.shouldPause;
 	var healthCount = playerHealthInfo.health;
 	var liveCount = playerHealthInfo.lives;
@@ -110,10 +110,9 @@ function OnGUI ()
 		Time.timeScale = timeScale;
 	}
 	
-	if(onMolePlatform && mole != null) {
-		var moleStatus = mole.GetComponent(ThirdPersonStatus);
-		enemyHealthLeft = parseFloat(moleStatus.health) / moleStatus.maxHealth;
-		Debug.Log(enemyHealthLeft);
+	if(onBossPlatform && boss != null) {
+		var bossStatus = boss.GetComponent(ThirdPersonStatus);
+		enemyHealthLeft = parseFloat(bossStatus.health) / bossStatus.maxHealth;
 		GUI.Label( Rect ((scaledResolutionWidth / 2) - 500, 100, 1000*enemyHealthLeft,20),"","healthBar");
 		GUI.Label( Rect ((scaledResolutionWidth / 2) - 500 + (1000*enemyHealthLeft), 100, 1000*(1-enemyHealthLeft),20),"","healthBarEmpty");
 	}

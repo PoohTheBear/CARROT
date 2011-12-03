@@ -92,7 +92,9 @@ private var lastVerticalButtonPressed = 0.0;
 private var lastVerticalValue = 0.0;
 var canPunch = true;
 var shouldPause = false;
-private var onMolePlatform = false;
+private var onBossPlatform = false;
+private var boss: GameObject = null;
+private var lastPlatformOn: int = 0;
 
 function Awake ()
 {
@@ -544,15 +546,36 @@ function GetStartedDashing()
 	return startedDashing;
 }
 
-function GetOnMolePlatform()
+function GetOnBossPlatform()
 {
-	return onMolePlatform;
+	return onBossPlatform;
 }
 
-function SetOnMolePlatform(isOn : boolean)
+function SetOnBossPlatform(isOn : boolean)
 {
-	onMolePlatform = isOn;
+	onBossPlatform = isOn;
 }
+
+function GetBoss()
+{
+	return boss;
+}
+
+function SetBoss(newBoss: GameObject)
+{
+	boss = newBoss;
+}
+
+function GetLastPlatformOn()
+{
+	return lastPlatformOn;
+}
+
+function SetLastPlatformOn(lastPlatform: int)
+{
+	lastPlatformOn = lastPlatform;
+}
+
 // Require a character controller to be attached to the same game object
 @script RequireComponent(CharacterController)
 @script AddComponentMenu("Third Person Player/Third Person Controller")

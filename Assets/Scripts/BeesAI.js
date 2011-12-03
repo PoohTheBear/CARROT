@@ -4,11 +4,11 @@ private var inAction = false;
 var attackDistance = 1.0;
 var visionDistance = 17.0;
 var damage = 1;
-var burrowTime = 0.3;
 private var canAttack = true;
-var startPosition = Vector3.zero;
-var damageDealt = 1; // Per hit to mole
+private var startPosition = Vector3.zero;
 var idleTime = 3;
+var goHome = false;
+var stay = false;
 
 private var gotBumped = false;
 private var baseY = 0;
@@ -16,9 +16,8 @@ private var baseY = 0;
 private var characterController : CharacterController;
 	characterController = GetComponent(CharacterController);
 
-var levelStateMachine : LevelStatus;
+private var levelStateMachine : LevelStatus;
 var target : Transform;
-var status : ThirdPersonStatus;
 
 function Start () {
 
@@ -40,7 +39,7 @@ function RotateTowardsYPosition (targetPos : Vector3, rotateSpeed : float) : flo
 	var relative = transform.InverseTransformPoint(targetPos);
 	//var angle = Mathf.Atan2 (relative.x, relative.z) * Mathf.Rad2Deg;
 	var angle = Mathf.Atan(relative.y) * Mathf.Rad2Deg;
-	Debug.Log("y " + angle);
+	//Debug.Log("y " + angle);
 	// Clamp it with the max rotation speed
 	var maxRotation = rotateSpeed * Time.deltaTime;
 	var clampedAngle = Mathf.Clamp(angle, -maxRotation, maxRotation);
@@ -56,7 +55,7 @@ function RotateTowardsPosition (targetPos : Vector3, rotateSpeed : float) : floa
 	// Compute relative point and get the angle towards it
 	var relative = transform.InverseTransformPoint(targetPos);
 	var angle = Mathf.Atan2 (relative.x, relative.z) * Mathf.Rad2Deg;
-	Debug.Log("norm " + angle);
+	//Debug.Log("norm " + angle);
 	// Clamp it with the max rotation speed
 	var maxRotation = rotateSpeed * Time.deltaTime;
 	var clampedAngle = Mathf.Clamp(angle, -maxRotation, maxRotation);
@@ -82,64 +81,66 @@ function Slam (attacked) {
 
 function Attack () {
 	// deal damage
-	// target.SendMessage("ApplyDamage", damage);
-	// knock the player back and to the side
-	Slam(true);
+	target.SendMessage("ApplyDamage", damage);
+	GameObject.FindGameObjectWithTag("Player").GetComponent(ThirdPersonController).SetLastPlatformOn(0);
+	goHome = true;
 }
 
 function Idle (seconds) {
 	yield WaitForSeconds(seconds);
 }
 
-function HeadBump () {
-	if (!gotBumped && !inAction) {
-		SendMessage("ApplyDamage", damageDealt);
-		gotBumped = true;
-		Slam(false);
-	}
-}
-
 function Move () {
 	var time = 0.0;
 	while (true)
 	{
+		var playerOn: int = GameObject.FindWithTag("Player").GetComponent(ThirdPersonController).GetLastPlatformOn();
+		var offset;
+		if(playerOn != 0 && !goHome && !stay) {
+			if(playerOn == 1) {
+				yield Idle(idleTime);
+			}
+			offset = transform.position - target.position;
 	
-		var offset = transform.position - target.position;
-
-		Debug.Log("Magnitude " + offset.magnitude);
-		
-		if (offset.magnitude > visionDistance) {
-			yield Idle(1);
-			continue;
-		}
-		
-		var angle = RotateTowardsPosition(target.position, rotateSpeed);
-		
-		var yAngle = RotateTowardsYPosition(target.position, rotateSpeed);
-		
-		if (angle < 10 && angle > -10) {
-			direction = transform.TransformDirection(Vector3.forward * moveSpeed);
-			characterController.Move(direction);
-		}
-		
-		if (canAttack && offset.magnitude < attackDistance) {
-			canAttack = false;
-			yield Idle(1);
-			// Go back to nest
-			//StartCoroutine("AllowAttacking");
+			//Debug.Log("Following Player on: " + playerOn);
 			
-			time = 0;
+			var angle = RotateTowardsPosition(target.position, rotateSpeed);
 			
-			Attack();
+			var yAngle = RotateTowardsYPosition(target.position, rotateSpeed);
+			
+			if (angle < 10 && angle > -10) {
+				if(playerOn >= 8) {
+					direction = transform.TransformDirection(Vector3.forward * moveSpeed);
+				} else {
+					direction = transform.TransformDirection(Vector3.forward * 0.05);
+				}
+				characterController.Move(direction);
+			}
+			
+			if (canAttack && offset.magnitude < attackDistance) {							
+				Attack();
+			}
+		} else if(!stay) {	
+			offset = startPosition - transform.position;
+			if(offset.magnitude >= 0.5){	
+				Debug.Log("Going home");
+					
+				var angleElse = RotateTowardsPosition(startPosition, rotateSpeed);
+				
+				var yAngleElse = RotateTowardsYPosition(startPosition, rotateSpeed);
+				
+				if (angleElse < 10 && angleElse > -10) {
+					direction = transform.TransformDirection(Vector3.forward * moveSpeed);
+					characterController.Move(direction);
+				}
+			} else {
+				goHome = false;
+				canAttack = true;
+			}
 		}
 		
 		yield;
 	}
-}
-
-function AllowAttacking() {
-      yield WaitForSeconds(burrowTime * 2);
-      canAttack = true;
 }
 /*
 	animations played are:

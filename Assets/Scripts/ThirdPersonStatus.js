@@ -6,6 +6,7 @@
 var health : int = 6;
 var maxHealth : int = 6;
 var lives = 4;
+var collectable: GameObject;
 
 // sound effects.
 var struckSound: AudioClip;
@@ -75,6 +76,10 @@ function Die ()
 	health = maxHealth;
 	
 	if(lives < 0) {
+		if(collectable != null) {
+			transform.position.y += 1;
+			GameObject.Instantiate(collectable,transform.position,transform.rotation);
+		}
 		Destroy(transform.gameObject);
 	}
 	

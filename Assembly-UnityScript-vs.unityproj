@@ -49,7 +49,9 @@
      <Compile Include="Assets\Scripts\CreditsGUI.js" />
      <Compile Include="Assets\Scripts\DashParticleController.js" />
      <Compile Include="Assets\Scripts\DoubleJumpParticleController.js" />
-     <Compile Include="Assets\Scripts\EnterMolePlatform.js" />
+     <Compile Include="Assets\Scripts\EatBrocolli.js" />
+     <Compile Include="Assets\Scripts\EatSpinach.js" />
+     <Compile Include="Assets\Scripts\EnterBossPlatform.js" />
      <Compile Include="Assets\Scripts\FalloutDeath.js" />
      <Compile Include="Assets\Scripts\GameHUD.js" />
      <Compile Include="Assets\Scripts\GameOverLoseGUI.js" />
@@ -57,8 +59,10 @@
      <Compile Include="Assets\Scripts\HeadBumpTrigger.js" />
      <Compile Include="Assets\Scripts\LevelStatus.js" />
      <Compile Include="Assets\Scripts\ObjectRotator.js" />
+     <Compile Include="Assets\Scripts\PlatformTrigger.js" />
      <Compile Include="Assets\Scripts\Respawn.js" />
      <Compile Include="Assets\Scripts\StartMenuGUI.js" />
+     <Compile Include="Assets\Scripts\TeddyAnimation.js" />
      <Compile Include="Assets\Scripts\ThirdPersonController.js" />
      <Compile Include="Assets\Scripts\ThirdPersonStatus.js" />
      <None Include="Assets\Standard Assets\Toon Shading\Sources\Shaders\Toony-Basic.shader" />
