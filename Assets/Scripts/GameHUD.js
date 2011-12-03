@@ -112,9 +112,11 @@ function OnGUI ()
 	
 	if(onBossPlatform && boss != null) {
 		var bossStatus = boss.GetComponent(ThirdPersonStatus);
+		var scaleVertical = Screen.height / nativeVerticalResolution;
+		var scaleHorizontal = Screen.width / scaledResolutionWidth;
 		enemyHealthLeft = parseFloat(bossStatus.health) / bossStatus.maxHealth;
-		GUI.Label( Rect ((scaledResolutionWidth / 2) - 500, 100, 1000*enemyHealthLeft,20),"","healthBar");
-		GUI.Label( Rect ((scaledResolutionWidth / 2) - 500 + (1000*enemyHealthLeft), 100, 1000*(1-enemyHealthLeft),20),"","healthBarEmpty");
+		GUI.Label( Rect ((scaledResolutionWidth / 2) - 1000*scaleHorizontal, 250*scaleVertical, 2000*enemyHealthLeft*scaleHorizontal,60*scaleVertical),"","healthBar");
+		GUI.Label( Rect ((scaledResolutionWidth / 2) - 1000*scaleHorizontal + (2000*enemyHealthLeft*scaleHorizontal), 250*scaleVertical, 2000*scaleHorizontal*(1-enemyHealthLeft),60*scaleVertical),"","healthBarEmpty");
 	}
 }
 
