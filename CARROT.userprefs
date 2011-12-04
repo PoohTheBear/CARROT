@@ -1,10 +1,10 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\TeddyAnimation.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\GameHUD.js">
     <Files>
+      <File FileName="Assets\Scripts\GameHUD.js" Line="119" Column="104" />
       <File FileName="Assets\Scripts\TeddyAnimation.js" Line="90" Column="3" />
       <File FileName="Assets\Scripts\ThirdPersonController.js" Line="262" Column="3" />
-      <File FileName="Assets\Scripts\GameHUD.js" Line="115" Column="74" />
       <File FileName="Assets\Scripts\BeesAI.js" Line="73" Column="23" />
       <File FileName="Assets\Scripts\PlatformTrigger.js" Line="9" Column="4" />
       <File FileName="Assets\Scripts\AIScript.js" Line="161" Column="23" />
