@@ -12,6 +12,7 @@ public var trotMaxAnimationSpeed : float = 1.0;
 public var runMaxAnimationSpeed : float = 1.0;
 public var jumpAnimationSpeed : float = 1.15;
 public var landAnimationSpeed : float = 1.0;
+public var applyGravity : boolean = true;
 
 private var _animation : Animation;
 
@@ -304,7 +305,9 @@ function Update() {
 	// Apply gravity
 	// - extra power jump modifies gravity
 	// - controlledDescent mode modifies gravity
-	//ApplyGravity ();
+	if (applyGravity) {
+		ApplyGravity ();
+	}
 
 	// Apply jumping logic
 	ApplyJumping ();

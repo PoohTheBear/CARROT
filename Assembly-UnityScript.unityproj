@@ -58,6 +58,7 @@
      <Compile Include="Assets\Scripts\GameOverWinGUI.js" />
      <Compile Include="Assets\Scripts\HeadBumpTrigger.js" />
      <Compile Include="Assets\Scripts\LevelStatus.js" />
+     <Compile Include="Assets\Scripts\MoleSafeZone.js" />
      <Compile Include="Assets\Scripts\ObjectRotator.js" />
      <Compile Include="Assets\Scripts\PlatformTrigger.js" />
      <Compile Include="Assets\Scripts\Respawn.js" />

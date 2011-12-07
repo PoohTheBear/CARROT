@@ -1,17 +1,23 @@
 var moveSpeed = 1.0;
+var dashSpeed = 1.0;
 var rotateSpeed = 10;
+var timeUntilDash = 1.0;
 private var inAction = false;
-var attackDistance = 1.0;
-var visionDistance = 17.0;
+private var isDashing = false;
+private var prepareToStopDashing = false;
+private var isIdle = false;
+var timeUntilDashStop = 0.5;
+var attackDistance = 4.0;
+var visionDistance = 26.0;
 var damage = 1;
-var burrowTime = 0.3;
-private var isBurrowed = false;
 private var canAttack = true;
 private var startScale = Vector3(1,1,1);
+private var startSpeed = moveSpeed;
 var startPosition = 0.0;
-var damageDealt = 1; // Per hit to mole
-var maxTimeWthoutUnburrow = 5;
-var idleTime = 3;
+var damageDealt = 1; // Per hit to wolf
+var maxTimeWthoutStop = 5;
+var idleTime = 5;
+var waitAfterAttack = 2;
 
 private var gotBumped = false;
 private var baseY = 0;
@@ -25,6 +31,7 @@ var status : ThirdPersonStatus;
 
 function Start () {
 
+	startSpeed = moveSpeed;
 	startScale = transform.localScale;
 	startPosition = transform.position.y;
 
@@ -73,47 +80,6 @@ function Attack () {
 	Slam(true);
 }
 
-function ToggleBurrow () {
-	inAction = true;
-	
-	var start = transform.position;
-	var end = start;
-	var height = characterController.height;
-	end.y -= height;
-	var time = burrowTime;
-	if (isBurrowed) {
-		time = 0;
-		start = transform.position;
-		end = start;
-		end.y = startPosition;
-	}
-	else {
-		// Burrowing
-	}
-		
-	yield TransformScale(start, end, time);
-	
-	
-	var mrs = GetComponentsInChildren(MeshRenderer);
-	
-	if (!isBurrowed) {
-		for(var renderer in mrs) {
-			renderer.enabled = false;
-		}
-	}
-	else {
-		for(var renderer in mrs) {
-			renderer.enabled = true;
-		}
-	}
-	
-	isBurrowed = !isBurrowed;
-	if(!isBurrowed)
-		gotBumped = false;
-	
-	inAction = false;
-}
-
 function TransformScale (start, end, time) {
 	
 	if (time == 0) {
@@ -134,11 +100,13 @@ function TransformScale (start, end, time) {
 }
 
 function Idle (seconds) {
+	isIdle = true;
 	yield WaitForSeconds(seconds);
+	isIdle = false;
 }
 
 function HeadBump () {
-	if (transform.localScale == startScale && !gotBumped && !inAction) {
+	if (isIdle || isDashing) {
 		SendMessage("ApplyDamage", damageDealt);
 		gotBumped = true;
 		Slam(false);
@@ -147,10 +115,15 @@ function HeadBump () {
 
 function Move () {
 	var time = 0.0;
+	var destinationPosition = Vector3.zero;
+	var lowestMag = 1000.0;
+	var dashStoppageTime = 0.0;
 	while (true)
 	{
-	/*	if (!inAction) {
 	
+	// Wolf should run towards for ±2 secs. If no direction change (maybe only slight) then dash into rabbit. During dash wolf
+	//won't change direction and rabbit should avoid
+		if (!inAction) {
 			var offset = transform.position - target.position;
 
 			//Debug.Log("Magnitude " + offset.magnitude);
@@ -160,47 +133,79 @@ function Move () {
 				continue;
 			}
 			
-			var angle = RotateTowardsPosition(target.position, rotateSpeed);
-			//Debug.Log("Angle = " + angle);
-			
-			if (isBurrowed) {
-				time += Time.deltaTime;
-				if (time > maxTimeWthoutUnburrow) {
-					yield ToggleBurrow();
-					yield Idle(idleTime);
-					time = 0;
-				}
-			}
-			
-			if (angle < 10 && angle > -10) {
-				if (isBurrowed) {
-					Debug.Log("moving");
-					direction = transform.TransformDirection(Vector3.forward * moveSpeed);
-					characterController.Move(direction);
+			var angle = 100.0;
+			if (!isDashing) {
+				angle = RotateTowardsPosition(target.position, rotateSpeed);
+				//Debug.Log(angle);
+				if (angle < 0.2 && angle > -0.2) {
+					//Debug.Log("SUCCESS");
+					time += Time.deltaTime;
 				}
 				else {
-					yield ToggleBurrow();
+					time = 0;
+				}
+				
+				if (time > timeUntilDash) {
+					isDashing = true;
+					destinationPosition = target.position;
+					time = 0;
+				}
+				//Debug.Log("Angle = " + angle);
+			}
+			
+			if (isDashing) {
+				angle = RotateTowardsPosition(target.position, 0);
+				moveSpeed = dashSpeed;
+			}
+			
+			/*time += Time.deltaTime;
+			if (time > maxTimeWthoutStop) {
+				yield Idle(idleTime);
+				time = 0;
+			}*/
+			
+			if (isDashing && (transform.position - destinationPosition).magnitude < 3.2) {
+				time = 0.0;
+				dashStoppageTime = 0.0;
+				prepareToStopDashing = true;
+				isDashing = false;
+			}
+			
+			if ( (angle < 10 && angle > -10) || isDashing || prepareToStopDashing) {
+			
+				direction = transform.TransformDirection(Vector3.forward * moveSpeed);
+				characterController.Move(direction);
+				//characterController.SimpleMove(direction);
+				if (prepareToStopDashing) {
+					dashStoppageTime += Time.deltaTime;
+				}
+				if (dashStoppageTime > timeUntilDashStop) {
+					isDashing = false;
+					moveSpeed = startSpeed;
+					yield Idle(1);
+					prepareToStopDashing = false;
 				}
 			}
 			
-			if (canAttack && isBurrowed && offset.magnitude < attackDistance) {
+			if (canAttack && offset.magnitude < attackDistance && angle < 10 && angle > -10) {
 				canAttack = false;
-				
-				StartCoroutine("AllowAttacking");
-				
+				isDashing = false;
+				prepareToStopDashing = false;
+				moveSpeed = startSpeed;
 				time = 0;
-				yield ToggleBurrow();
-				
 				Attack();
+				
+				yield Idle(1);
+				StartCoroutine("AllowAttacking");
 			}
 		}
-		*/
+		
 		yield;
 	}
 }
 
 function AllowAttacking() {
-      yield WaitForSeconds(burrowTime * 2);
+      yield WaitForSeconds(waitAfterAttack);
       canAttack = true;
 }
 /*

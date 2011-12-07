@@ -1,8 +1,15 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/BeesAI.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/WolfAI.js">
     <Files>
-      <File FileName="Assets/Scripts/BeesAI.js" Line="18" Column="1" />
+      <File FileName="Assets/Standard Assets/Character Controllers/Sources/Scripts/ThirdPersonController.js" Line="15" Column="42" />
+      <File FileName="Assets/Scripts/WolfAI.js" Line="178" Column="7" />
+      <File FileName="Assets/Scripts/BeesAI.js" Line="112" Column="24" />
+      <File FileName="Assets/Scripts/ThirdPersonController.js" Line="460" Column="1" />
+      <File FileName="Assets/Scripts/GameHUD.js" Line="109" Column="10" />
+      <File FileName="Assets/Scripts/RockContactTrigger.js" Line="29" Column="24" />
+      <File FileName="Assets/Scripts/HeadBumpTrigger.js" Line="9" Column="2" />
+      <File FileName="Assets/Scripts/MoleSafeZone.js" Line="14" Column="19" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

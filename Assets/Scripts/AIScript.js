@@ -8,7 +8,9 @@ var burrowTime = 0.3;
 private var isBurrowed = false;
 private var canAttack = true;
 private var startScale = Vector3(1,1,1);
-var startPosition = 0.0;
+private var startPositionY = 0.0;
+private var startPosition = Vector3.zero;
+var goHome = false;
 var damageDealt = 1; // Per hit to mole
 var maxTimeWthoutUnburrow = 5;
 var idleTime = 3;
@@ -28,7 +30,8 @@ var status : ThirdPersonStatus;
 function Start () {
 
 	startScale = transform.localScale;
-	startPosition = transform.position.y;
+	startPositionY = transform.position.y;
+	startPosition = transform.position;
 
 	levelStateMachine = FindObjectOfType(LevelStatus);
 	if (!levelStateMachine)
@@ -75,6 +78,10 @@ function Attack () {
 	Slam(true);
 }
 
+function SetGoHome (go) {
+	goHome = go;
+}
+
 function ToggleBurrow () {
 	inAction = true;
 	burrowingParticles.emit = true;
@@ -88,7 +95,7 @@ function ToggleBurrow () {
 		time = 0;
 		start = transform.position;
 		end = start;
-		end.y = startPosition;
+		end.y = startPositionY;
 	}
 	else {
 		// Burrowing
@@ -133,7 +140,7 @@ function TransformScale (start, end, time) {
 		
 		    yield;
 		}
-		transform.position.y = startPosition;
+		transform.position.y = startPositionY;
 		transform.localScale = Vector3(0.1,0.1,0.1);
 	}
 }
@@ -157,15 +164,24 @@ function Move () {
 		if (!inAction) {
 	
 			var offset = transform.position - target.position;
-
+			var offsetHome = transform.position - startPosition;
 			//Debug.Log("Magnitude " + offset.magnitude);
 			
-			if (offset.magnitude > visionDistance) {
+			var angle;
+			if (offset.magnitude <= visionDistance && !goHome) {
+				angle = RotateTowardsPosition(target.position, rotateSpeed);
+			}
+			else if (offsetHome.magnitude < 0.5) {
+				if (isBurrowed) {
+					yield ToggleBurrow();
+				}
 				yield Idle(1);
 				continue;
 			}
-			
-			var angle = RotateTowardsPosition(target.position, rotateSpeed);
+			else {
+				time = 0.0;
+				angle = RotateTowardsPosition(startPosition, rotateSpeed);
+			}
 			//Debug.Log("Angle = " + angle);
 			
 			if (isBurrowed) {
@@ -179,7 +195,6 @@ function Move () {
 			
 			if (angle < 10 && angle > -10) {
 				if (isBurrowed) {
-					Debug.Log("moving");
 					direction = transform.TransformDirection(Vector3.forward * moveSpeed);
 					characterController.Move(direction);
 				}
