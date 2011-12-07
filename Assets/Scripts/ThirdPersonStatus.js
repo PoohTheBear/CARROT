@@ -13,6 +13,7 @@ var struckSound: AudioClip;
 var deathSound: AudioClip;
 
 private var levelStateMachine : LevelStatus;		// link to script that handles the level-complete sequence.
+private var shouldBeSlammed = true;
 
 function Awake()
 {
@@ -30,6 +31,7 @@ function ApplyDamage (damage : int)
 	health -= damage;
 	if (health <= 0)
 	{
+		shouldBeSlammed = false;
 		SendMessage("Die");
 	}
 }
@@ -108,4 +110,12 @@ function Die ()
 function LevelCompleted()
 {
 	levelStateMachine.LevelCompleted();
+}
+
+function GetShouldBeSlammed() {
+	return shouldBeSlammed;
+}
+
+function SetShouldBeSlammed(shouldBe: boolean) {
+	shouldBeSlammed = shouldBe;
 }

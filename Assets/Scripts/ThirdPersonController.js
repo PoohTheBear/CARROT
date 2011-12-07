@@ -147,7 +147,12 @@ function UpdateSmoothedMovementDirection ()
 	var grounded = IsGrounded();
 	
 	// Forward vector relative to the camera along the x-z plane	
-	var forward = cameraTransform.TransformDirection(Vector3.forward);
+	var forward;
+	if(Input.GetMouseButton(1)) {
+		forward = cameraTransform.TransformDirection(Vector3.forward);
+	} else {
+		forward = transform.TransformDirection(Vector3.forward);
+	}
 	forward.y = 0;
 	forward = forward.normalized;
 
@@ -460,15 +465,18 @@ function SuperJump (height : float, jumpVelocity : Vector3)
 function Slam (direction : Vector3)
 {
 	//if (transform.gameObject.GetComponent(ThirdPersonStatus).health != transform.gameObject.GetComponent(ThirdPersonStatus).maxHealth) {
-	verticalSpeed = CalculateJumpVerticalSpeed (1);
-	inAirVelocity = direction * 6;
-	direction.y = 0.6;
-	Quaternion.LookRotation(-direction);
-	jumpsAvailable--;
-	slammed = true;
-	collisionFlags = CollisionFlags.None;
-	SendMessage("DidJump", SendMessageOptions.DontRequireReceiver);
-	//}
+	if(transform.gameObject.GetComponent(ThirdPersonStatus).GetShouldBeSlammed()) {
+		verticalSpeed = CalculateJumpVerticalSpeed (1);
+		inAirVelocity = direction * 6;
+		direction.y = 0.6;
+		Quaternion.LookRotation(-direction);
+		jumpsAvailable--;
+		slammed = true;
+		collisionFlags = CollisionFlags.None;
+		SendMessage("DidJump", SendMessageOptions.DontRequireReceiver);
+	} else {
+		transform.gameObject.GetComponent(ThirdPersonStatus).SetShouldBeSlammed(true);
+	}
 }
 
 function GetDirection () {
