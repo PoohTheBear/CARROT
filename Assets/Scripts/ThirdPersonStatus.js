@@ -79,8 +79,13 @@ function Die ()
 	
 	if(lives < 0) {
 		if(collectable != null) {
-			transform.position.y += 1;
-			GameObject.Instantiate(collectable,transform.position,transform.rotation);
+			if (transform.tag == "Wolf") {
+				transform.SendMessage("SpawnCarrot", collectable);
+			}
+			else {
+				transform.position.y += 1;
+				GameObject.Instantiate(collectable,transform.position,transform.rotation);
+			}
 		}
 		Destroy(transform.gameObject);
 	}

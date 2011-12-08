@@ -13,8 +13,10 @@ function OnTriggerEnter (other : Collider)
 		Destroy(other.attachedRigidbody.gameObject);
 	// Also kill all character controller passing through
 	// (enemies)
-	else if (other.GetType() == typeof(CharacterController))
+	else if (other.GetType() == typeof(CharacterController)) {
+		other.transform.SendMessage("Die");
 		Destroy(other.gameObject);
+	}
 }
 
 // Auto setup the pickup

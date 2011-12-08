@@ -127,7 +127,7 @@ function Awake ()
 
 function HidePlayer()
 {
-	GameObject.Find("rootJoint").GetComponent(SkinnedMeshRenderer).enabled = false; // stop rendering the player.
+	//GameObject.Find("rootJoint").GetComponent(SkinnedMeshRenderer).enabled = false; // stop rendering the player.
 	isControllable = false;	// disable player controls.
 }
 
@@ -205,11 +205,6 @@ function UpdateSmoothedMovementDirection ()
 				moveDirection = Vector3.RotateTowards(moveDirection, (h*right), rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
 				moveDirection = moveDirection.normalized;
 			}
-			// If we are really slow, just snap to the target direction
-			else if (moveSpeed < runSpeed * 0.9 && grounded)
-			{				
-				moveDirection = targetDirection.normalized;
-							}
 			// Otherwise smoothly turn towards it
 			else
 			{

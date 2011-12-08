@@ -150,7 +150,7 @@ function Idle (seconds) {
 }
 
 function HeadBump () {
-	if (transform.localScale == startScale && !gotBumped && !inAction) {
+	if (transform.localScale == startScale && !gotBumped && !inAction && canAttack) {
 		SendMessage("ApplyDamage", damageDealt);
 		gotBumped = true;
 		Slam(false);

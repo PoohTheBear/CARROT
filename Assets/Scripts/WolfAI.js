@@ -1,6 +1,6 @@
 var moveSpeed = 1.0;
 var dashSpeed = 1.0;
-var rotateSpeed = 10;
+var rotateSpeed = 20;
 var timeUntilDash = 1.0;
 private var inAction = false;
 private var isDashing = false;
@@ -10,16 +10,22 @@ var timeUntilDashStop = 0.5;
 var attackDistance = 4.0;
 var visionDistance = 26.0;
 var damage = 1;
+private var goHome = false;
 private var canAttack = true;
 private var startScale = Vector3(1,1,1);
 private var startSpeed = moveSpeed;
-var startPosition = 0.0;
+private var startPosition = Vector3.zero;
+private var startPositionY = 0.0;
+private var pitReached = false;
+private var isInsidePit = false;
 var damageDealt = 1; // Per hit to wolf
 var maxTimeWthoutStop = 5;
 var idleTime = 5;
-var waitAfterAttack = 2;
+var waitAfterAttack = 2.0;
+var waitAfterDash = 3.0;
+var jumpHeight = 20.0;
+var maxDashTime = 5.0;
 
-private var gotBumped = false;
 private var baseY = 0;
 
 private var characterController : CharacterController;
@@ -31,9 +37,19 @@ var status : ThirdPersonStatus;
 
 function Start () {
 
+	animation.wrapMode = WrapMode.Loop;
+	
+	animation["idle"].layer = -1;
+	animation["walk"].layer = -1;
+	animation.SyncLayer(-1);
+	
+	animation["pose"].layer = 0;
+	animation["pose"].wrapMode = WrapMode.Once;
+
 	startSpeed = moveSpeed;
 	startScale = transform.localScale;
-	startPosition = transform.position.y;
+	startPositionY = transform.position.y;
+	startPosition = transform.position;
 
 	levelStateMachine = FindObjectOfType(LevelStatus);
 	if (!levelStateMachine)
@@ -59,17 +75,18 @@ function RotateTowardsPosition (targetPos : Vector3, rotateSpeed : float) : floa
 	return angle;
 }
 
+function SpawnCarrot (carrot : GameObject) {
+	Debug.Log("SPAWNING");
+	var position = startPosition;
+	position.y++;
+	GameObject.Instantiate(carrot,position,transform.rotation);
+}
+
 function Slam (attacked) {
 	var slamDirection = transform.InverseTransformDirection(target.position - transform.position);
 	slamDirection.y = 1;
 	slamDirection.z = 0;
-	if (slamDirection.x >= 0)
-		slamDirection.x = 1;
-	else
-		slamDirection.x = -1;
-	if (!attacked) {
-		slamDirection.x = 0;
-	}
+	slamDirection.x = 1;
 	target.SendMessage("Slam", transform.TransformDirection(slamDirection));
 }
 
@@ -80,83 +97,121 @@ function Attack () {
 	Slam(true);
 }
 
-function TransformScale (start, end, time) {
-	
-	if (time == 0) {
-		transform.position = Vector3.Lerp(start, end, 1);
-		transform.localScale = startScale;
-	}
-	else {
-		var t = 0.0;
-		while (t < 1.0) {
-		    t += Time.deltaTime / time;
-		    transform.position = Vector3.Lerp(start, end, t);
-		
-		    yield;
-		}
-		transform.position.y = startPosition;
-		transform.localScale = Vector3(0.1,0.1,0.1);
-	}
-}
-
 function Idle (seconds) {
 	isIdle = true;
+	animation.Play("idle");
+	animation.Rewind("walk");
 	yield WaitForSeconds(seconds);
+	animation.Play("walk");
 	isIdle = false;
 }
 
 function HeadBump () {
-	if (isIdle || isDashing) {
+	if (isIdle || isDashing || prepareToStopDashing) {
 		SendMessage("ApplyDamage", damageDealt);
-		gotBumped = true;
 		Slam(false);
 	}
+}
+
+function SetGoHome (go) {
+	goHome = go;
+}
+
+function InsidePit (inside) {
+	//Debug.Log("Inside pit");
+	if (inside) {
+		yield Idle(waitAfterDash);
+		transform.SendMessage("Jump", 4);
+	}
+	isInsidePit = inside;
+}
+
+function JumpOverPit (toJump) {
+	if (isDashing || prepareToStopDashing) {
+		return;
+	}
+	if (toJump) {
+		transform.SendMessage("Jump", jumpHeight);
+	}
+	else {
+		isInsidePit = false;
+	}
+	pitReached = toJump;
 }
 
 function Move () {
 	var time = 0.0;
 	var destinationPosition = Vector3.zero;
-	var lowestMag = 1000.0;
 	var dashStoppageTime = 0.0;
+	var maxJump = -1.0;
+	var dashTime = 0.0;
+	var insidePitTime = 0.0;
 	while (true)
 	{
 	
 	// Wolf should run towards for ±2 secs. If no direction change (maybe only slight) then dash into rabbit. During dash wolf
 	//won't change direction and rabbit should avoid
 		if (!inAction) {
+			if (maxJump < target.position.y - transform.position.y) {
+				maxJump = target.position.y - transform.position.y;
+			}
 			var offset = transform.position - target.position;
-
-			//Debug.Log("Magnitude " + offset.magnitude);
+			var offsetHome = transform.position - startPosition;
 			
-			if (offset.magnitude > visionDistance) {
-				yield Idle(1);
-				continue;
+			if (!pitReached) {
+				isInsidePit = false;
 			}
 			
 			var angle = 100.0;
-			if (!isDashing) {
-				angle = RotateTowardsPosition(target.position, rotateSpeed);
-				//Debug.Log(angle);
-				if (angle < 0.2 && angle > -0.2) {
-					//Debug.Log("SUCCESS");
-					time += Time.deltaTime;
+			//if (offset.magnitude <= visionDistance && !goHome && !pitReached) {
+			if (offset.magnitude <= visionDistance && !goHome) {
+				if (!isDashing) {
+					angle = RotateTowardsPosition(target.position, rotateSpeed);
+					dashTime = 0.0;
+					
+					if (angle < 0.2 && angle > -0.2 && !isInsidePit && !pitReached) {
+						time += Time.deltaTime;
+					}
+					else {
+						time = 0;
+					}
+					
+					if (time > timeUntilDash) {
+						isDashing = true;
+						animation.Play("pose");
+						animation.Rewind("idle");
+						destinationPosition = target.position;
+						time = 0;
+					}
 				}
 				else {
-					time = 0;
+					angle = RotateTowardsPosition(target.position, 0);
+					if (isDashing) {
+						dashTime += Time.deltaTime;
+						moveSpeed = dashSpeed;
+					}
+					else {
+						angle = 0;
+					}
 				}
-				
-				if (time > timeUntilDash) {
-					isDashing = true;
-					destinationPosition = target.position;
-					time = 0;
-				}
-				//Debug.Log("Angle = " + angle);
+			}
+			else if (offsetHome.magnitude < 0.5) {
+				yield Idle(1);
+				continue;
+			}
+			else {
+				time = 0.0;
+				dashStoppageTime = 0.0;
+				prepareToStopDashing = false;
+				isDashing = false;
+				moveSpeed = startSpeed;
+				angle = RotateTowardsPosition(startPosition, rotateSpeed);
 			}
 			
-			if (isDashing) {
+			/*if (isDashing) {
 				angle = RotateTowardsPosition(target.position, 0);
 				moveSpeed = dashSpeed;
-			}
+			}*/
 			
 			/*time += Time.deltaTime;
 			if (time > maxTimeWthoutStop) {
@@ -171,23 +226,39 @@ function Move () {
 				isDashing = false;
 			}
 			
-			if ( (angle < 10 && angle > -10) || isDashing || prepareToStopDashing) {
+			//Debug.Log("current " + transform.position.y + " start " + startPositionY);
+			
+			if ( (angle < 10 && angle > -10) || isDashing || prepareToStopDashing || transform.position.y > startPositionY + 1) {
 			
 				direction = transform.TransformDirection(Vector3.forward * moveSpeed);
-				characterController.Move(direction);
-				//characterController.SimpleMove(direction);
+				//characterController.Move(direction);
+				characterController.SimpleMove(direction);
 				if (prepareToStopDashing) {
 					dashStoppageTime += Time.deltaTime;
 				}
-				if (dashStoppageTime > timeUntilDashStop) {
+				if (dashStoppageTime > timeUntilDashStop || dashTime > maxDashTime) {
 					isDashing = false;
 					moveSpeed = startSpeed;
-					yield Idle(1);
+					yield Idle(waitAfterDash);
+					dashStoppageTime = 0.0;
+					time = 0;
 					prepareToStopDashing = false;
 				}
 			}
 			
-			if (canAttack && offset.magnitude < attackDistance && angle < 10 && angle > -10) {
+			if (isInsidePit) {
+				insidePitTime += Time.deltaTime;
+			}
+			else {
+				insidePitTime = 0.0;
+			}
+			if (insidePitTime > maxDashTime && isInsidePit) {
+				InsidePit(true);
+			}
+			
+			//Debug.Log("Inside " + isInsidePit + " Reach " + pitReached);
+			
+			if (canAttack && offset.magnitude < attackDistance && angle < 10 && angle > -10  && target.position.y - transform.position.y < 0.5) {
 				canAttack = false;
 				isDashing = false;
 				prepareToStopDashing = false;
@@ -195,8 +266,8 @@ function Move () {
 				time = 0;
 				Attack();
 				
-				yield Idle(1);
-				StartCoroutine("AllowAttacking");
+				yield Idle(waitAfterAttack);
+				canAttack = true;
 			}
 		}
 		

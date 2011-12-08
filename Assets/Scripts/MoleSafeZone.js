@@ -1,18 +1,14 @@
 
 function OnTriggerExit (other : Collider)
 {
-	if (other.tag == "Mole") {
-		Debug.Log("MOLE OUT!");
-		//other.transform.SetGoHome(true);
+	if (other.tag == "Mole" || other.tag == "Wolf") {
 		other.transform.SendMessage("SetGoHome", true);
 	}
 }
 
 function OnTriggerEnter (other : Collider)
 {
-	if (other.tag == "Mole") {
-		Debug.Log("IN");
-		//other.transform.SetGoHome(false);
+	if (other.tag == "Mole" || other.tag == "Wolf") {
 		other.transform.SendMessage("SetGoHome", false);
 	}
 }

@@ -20,8 +20,8 @@ private var playerLink: GameObject;
 // We use this function to initialise our link to the Lerpz GameObject.
 function Awake()
 {
-	levelGoal.GetComponent(MeshCollider).isTrigger = false;
-	playerLink = GameObject.Find("Player");
+	//levelGoal.GetComponent(MeshCollider).isTrigger = false;
+	playerLink = GameObject.FindGameObjectWithTag("Player");
 	if(!playerLink)
 		Debug.Log("Could not get link to Lerpz");
 }	
@@ -67,7 +67,7 @@ function UnlockLevelExit()
 	yield WaitForSeconds(0.3);
 	exitGateway.active = false;
 	
-	levelGoal.GetComponent(MeshCollider).isTrigger = true;
+	//levelGoal.GetComponent(MeshCollider).isTrigger = true;
 	
 	yield WaitForSeconds(4);
 	
@@ -91,6 +91,6 @@ function LevelCompleted()
 	
 	levelGoal.animation.Play();
 	
-	yield WaitForSeconds (levelGoal.animation.clip.length);
-	Application.LoadLevel("GameOver");
+	//yield WaitForSeconds (levelGoal.animation.clip.length);
+	Application.LoadLevel("GameOverWin");
 }

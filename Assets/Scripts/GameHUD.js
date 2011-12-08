@@ -22,6 +22,10 @@ var brocolliActiveImage: Texture2D;
 var brocolliInactiveImage: Texture2D;
 var brocolliOffset = Vector2(0, 0);
 
+var scrollSpeed = 1.0;
+private var t = 0.0;
+var background : Texture2D;
+
 var gSkin: GUISkin;
 
 private var playerHealthInfo : ThirdPersonStatus;
@@ -32,6 +36,7 @@ private var enemyHealthLeft = 0.0;
 // Cache link to player's state management script for later use.
 function Awake()
 {
+
 	playerHealthInfo = GameObject.FindWithTag("Player").GetComponent(ThirdPersonStatus);
 	playerPowerupsInfo = GameObject.FindWithTag("Player").GetComponent(ThirdPersonController);
 	timeScale = Time.timeScale;
@@ -50,6 +55,11 @@ function OnGUI ()
 	else
 		Debug.Log("GameHUD: Skin Object missing!");
 		
+		
+	var backgroundStyle : GUIStyle = new GUIStyle();
+	backgroundStyle.normal.background = background;
+	GUI.Label( Rect((Screen.width - (Screen.height*2))*0.75,0,Screen.height*2, Screen.height),"",backgroundStyle);
+				
 	var scaledResolutionWidth = nativeVerticalResolution / Screen.height * Screen.width;
 
 	var onBossPlatform = playerPowerupsInfo.GetOnBossPlatform();
@@ -73,6 +83,19 @@ function OnGUI ()
 		else
 			DrawImageTopAligned(Vector2(64*(i%10),128+(64*(i/10))), healthInactiveImage);
 	}	
+	
+	if (t < 20.0) {
+		t += Time.deltaTime;
+		var x = (Screen.width / 2);
+		var y = 200;//Screen.height - (t*scrollSpeed);
+		GUI.Label ( Rect(x - 150, y + 20, 2000, 200), "Tutorials");
+		
+		GUI.Label ( Rect(x - 150, y + 200, 2000, 200), "Žaidime siekiama nugalėti vilką ir atimti iš jo stebuklingą morką!");
+		
+		GUI.Label ( Rect(x - 150, y + 400, 2000, 200), "WASD – bėgimas ir krypties keitimas");
+		GUI.Label ( Rect(x - 150, y + 600, 2000, 200), "SPACE – šokinėjimas");
+		GUI.Label ( Rect(x - 150, y + 800, 2000, 200), "Pelės sukiojimas + pelės mygtukas - kameros valdymas");
+	}
 	
 	if (playerPowerupsInfo.canDash)
 		DrawImageTopRightAligned(coffeeBeanOffset, coffeeBeanActiveImage);

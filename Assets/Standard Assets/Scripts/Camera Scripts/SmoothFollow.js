@@ -75,11 +75,12 @@ function LateUpdate () {
 		correctedDistance = Vector3.Distance(trueTargetPosition, position);
 		isCorrected = true;
 	}
-	if(!isCorrected || correctedDistance > currentDistance)
+	/*if(!isCorrected || correctedDistance > currentDistance)
 		currentDistance = Mathf.Lerp(currentDistance, correctedDistance, Time.deltaTime * zoomDamping);
 	else
-		currentDistance = correctedDistance;
+		currentDistance = correctedDistance;*/
 		
+	currentDistance = distance;
 	position = target.position - (rotation * Vector3.forward * currentDistance + Vector3(0,-height,0));
 	
 	

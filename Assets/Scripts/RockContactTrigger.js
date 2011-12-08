@@ -1,8 +1,7 @@
 
 var slamStrength = 2.0;
 
-function OnTriggerEnter (other : Collider)
-{
+function OnTriggerEnter (other : Collider) {
 	if (other.tag == "Player") {
 		var player = other.transform;
 		var controller = player.GetComponent(ThirdPersonController);
@@ -11,7 +10,6 @@ function OnTriggerEnter (other : Collider)
 			//boulder.position
 			//boulder.position.x += 1;
 			boulder.rotation.y -= 0.1;
-			Debug.Log("LAWL" + boulder.rotation.y);
 			/*// Compute relative point and get the angle towards it
 			var relative = boulder.InverseTransformPoint(boulder.position);
 			var angle = Mathf.Atan2 (relative.x, relative.z) * Mathf.Rad2Deg;
@@ -30,4 +28,8 @@ function OnTriggerEnter (other : Collider)
 			player.SendMessage("Slam", transform.TransformDirection(slamDirection));
 		}
 	}
+}
+
+function OnTriggerStay (other : Collider) {
+	OnTriggerEnter(other);
 }

@@ -124,6 +124,9 @@ public var jumpPoseAnimation : AnimationClip;
 			
 }
 
+public function Jump (height) {
+	verticalSpeed = CalculateJumpVerticalSpeed (height);
+}
 
 function UpdateSmoothedMovementDirection ()
 {
@@ -228,7 +231,6 @@ function UpdateSmoothedMovementDirection ()
 		
 }
 
-
 function ApplyJumping ()
 {
 	// Prevent jumping too fast after each other
@@ -312,6 +314,7 @@ function Update() {
 	// Apply jumping logic
 	ApplyJumping ();
 	
+	//Debug.Log("MOVE jump " + verticalSpeed);
 	
 	// Calculate actual motion
 	var movement = moveDirection * moveSpeed + Vector3 (0, verticalSpeed, 0) + inAirVelocity;

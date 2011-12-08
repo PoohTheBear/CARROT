@@ -18,7 +18,7 @@
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
 	<OutputPath>Temp\bin\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE;UNITY_3_4_0;UNITY_3_4;UNITY_EDITOR;ENABLE_PROFILER;UNITY_STANDALONE_WIN;ENABLE_GENERICS;ENABLE_DUCK_TYPING;ENABLE_TERRAIN;ENABLE_MOVIES;ENABLE_NETWORK;ENABLE_CLOTH;ENABLE_WWW</DefineConstants>
+	<DefineConstants>DEBUG;TRACE;UNITY_3_4_0;UNITY_3_4;UNITY_EDITOR;ENABLE_PROFILER;UNITY_STANDALONE_OSX;ENABLE_GENERICS;ENABLE_DUCK_TYPING;ENABLE_TERRAIN;ENABLE_MOVIES;ENABLE_NETWORK;ENABLE_CLOTH;ENABLE_WWW</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<NoWarn>0169</NoWarn>
@@ -46,6 +46,7 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\AIScript.js" />
      <Compile Include="Assets\Scripts\BeesAI.js" />
+     <Compile Include="Assets\Scripts\CarrotEatTrigger.js" />
      <Compile Include="Assets\Scripts\CreditsGUI.js" />
      <Compile Include="Assets\Scripts\DashParticleController.js" />
      <Compile Include="Assets\Scripts\DoubleJumpParticleController.js" />
@@ -57,6 +58,8 @@
      <Compile Include="Assets\Scripts\GameOverLoseGUI.js" />
      <Compile Include="Assets\Scripts\GameOverWinGUI.js" />
      <Compile Include="Assets\Scripts\HeadBumpTrigger.js" />
+     <Compile Include="Assets\Scripts\JumpOutOfPitTrigger.js" />
+     <Compile Include="Assets\Scripts\JumpOverPitTrigger.js" />
      <Compile Include="Assets\Scripts\LevelStatus.js" />
      <Compile Include="Assets\Scripts\MoleSafeZone.js" />
      <Compile Include="Assets\Scripts\ObjectRotator.js" />
@@ -68,6 +71,7 @@
      <Compile Include="Assets\Scripts\ThirdPersonController.js" />
      <Compile Include="Assets\Scripts\ThirdPersonStatus.js" />
      <Compile Include="Assets\Scripts\WolfAI.js" />
+     <Compile Include="Assets\Scripts\WolfRockTrigger.js" />
      <None Include="Assets\Standard Assets\Toon Shading\Sources\Shaders\Toony-Basic.shader" />
      <None Include="Assets\Standard Assets\Particles\Sources\Shaders\Particle Alpha Blend (Queue +100).shader" />
      <None Include="Assets\Standard Assets\Skyboxes\ skybox info.txt" />
