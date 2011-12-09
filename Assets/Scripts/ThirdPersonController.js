@@ -92,6 +92,7 @@ private var lastVerticalButtonPressed = 0.0;
 private var lastVerticalValue = 0.0;
 var canPunch = true;
 var shouldPause = false;
+var showTutorials = false;
 private var onBossPlatform = false;
 private var boss: GameObject = null;
 private var lastPlatformOn: int = 0;
