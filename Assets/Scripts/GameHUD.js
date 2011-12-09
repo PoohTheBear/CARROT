@@ -30,7 +30,7 @@ var phoneInactiveImage: Texture2D;
 var phoneOffset = Vector2(0, 0);
 
 var scrollSpeed = 1.0;
-private var t = 0.0;
+var t = 0.0;
 var background : Texture2D;
 
 var gSkin: GUISkin;
@@ -39,6 +39,16 @@ private var playerHealthInfo : ThirdPersonStatus;
 private var playerPowerupsInfo : ThirdPersonController;
 private var timeScale;
 private var enemyHealthLeft = 0.0;
+private var pause = false;
+private var showHelp = false;
+private var showHelpGoals = false;
+private var showHelpEnemies = false;
+private var showHelpEnemyWolf = false;
+private var showHelpEnemyBear = false;
+private var showHelpEnemyMole = false;
+private var showHelpPowers = false;
+private var showHelpPowerStrength = false;
+private var showHelpPowerJump = false;
 
 // Cache link to player's state management script for later use.
 function Awake()
@@ -71,10 +81,25 @@ function OnGUI ()
 
 	var onBossPlatform = playerPowerupsInfo.GetOnBossPlatform();
 	var boss = playerPowerupsInfo.GetBoss();
-	var pause = playerPowerupsInfo.shouldPause;
 	var healthCount = playerHealthInfo.health;
 	var liveCount = playerHealthInfo.lives;
 	var showTutorials = playerPowerupsInfo.showTutorials;
+	
+	if(Input.getButtonDown("Pause") && ! showHelp) {
+		pause = !pause;
+	}
+	
+	if(Input.getButtonDown("Help")) {
+		showHelp = !showHelp;
+		showHelpGoals = false;
+		showHelpEnemies = false;
+		showHelpEnemyWolf = false;
+		showHelpEnemyBear = false;
+		showHelpEnemyMole = false;
+		showHelpPowers = false;
+		showHelpPowerStrength = false;
+		showHelpPowerJump = false;
+	}
 
 	// Our GUI is laid out for a 1920 x 1200 pixel display (16:10 aspect). The next line makes sure it rescales nicely to other resolutions.
 	GUI.matrix = Matrix4x4.TRS (Vector3(0, 0, 0), Quaternion.identity, Vector3 (Screen.height / nativeVerticalResolution, Screen.height / nativeVerticalResolution, 1)); 
@@ -107,9 +132,9 @@ function OnGUI ()
 		
 	if (showTutorials) {
 		t += Time.deltaTime;
-		var x = (scaledResolutionWidth / 2) + dolphinOffset.x - 150;
+		var x = (scaledResolutionWidth / 2) + dolphinOffset.x + dolphinImage.width - 150;
 		var y = Screen.height - t*20;
-		var width = scaledResolutionWidth - 300 - dolphinImage.width;
+		var width = scaledResolutionWidth - 300 - dolphinImage.width  - dolphinOffset.x;
 		var height = 100;
 		var gapSize = 50;
 		DrawImageTopAligned(dolphinOffset, dolphinImage);
@@ -119,7 +144,7 @@ function OnGUI ()
 		
 		GUI.Label ( Rect(x, y + height* 3 + gapSize*1, width, height), "These are your goals:");
 		
-		GUI.Label ( Rect(x, y + height* 4 + gapSize*1, width, height), "Main goal: defeat Wolf the Evil Mastermind Snob and take his magic carrot.");
+		GUI.Label ( Rect(x, y + height* 4 + gapSize*1, width, height), "Main goal: defeat Wolf the Evil Mastermind and take his magic carrot.");
 		GUI.Label ( Rect(x, y + height* 5 + gapSize*1, width, height), "Main goal: defeat at least one of Wolf's mercenaries, Mole or Bear.");
 		GUI.Label ( Rect(x, y + height* 6 + gapSize*1, width, height), "Extra goal: defeat Bear the Legendary Fist");
 		GUI.Label ( Rect(x, y + height* 7 + gapSize*1, width, height), "Extra goal: defeat Mole the Restless");
@@ -127,7 +152,119 @@ function OnGUI ()
 		GUI.Label ( Rect(x, y + height* 8 + gapSize*2, width, height), "Controls:");
 		GUI.Label ( Rect(x, y + height* 9 + gapSize*2, width, height), "WASD or Arrow Keys – movement");
 		GUI.Label ( Rect(x, y + height*10 + gapSize*2, width, height), "SPACE – jump");
-		GUI.Label ( Rect(x, y + height*11 + gapSize*2, width, height), "Mouse click + mouse movement - camera rotation");
+		GUI.Label ( Rect(x, y + height*11 + gapSize*2, width, height), "H – call me");
+		GUI.Label ( Rect(x, y + height*12 + gapSize*2, width, height), "Mouse click + mouse movement - camera rotation");
+	}
+	if (showHelp) {
+		var x = (scaledResolutionWidth / 2) + dolphinOffset.x - 150;
+		var y = Screen.height + dolphinOffset.y;
+		var width = scaledResolutionWidth - 300 - dolphinOffset.x;
+		var height = 100;
+		var gapSize = 50;
+		DrawImageTopAligned(dolphinOffset, dolphinImage);
+		if(!showHelpGoals && !showHelpEnemies && !showHelpPower) {
+			GUI.Label ( Rect(x + dolphinImage.width, y + height* 0 + gapSize*0, width - dolphinImage.width, height), "Hello there, Rabbit the Hermit!");
+			GUI.Label ( Rect(x + dolphinImage.width, y + height* 1 + gapSize*0, width - dolphinImage.width, height), "What would you like to know more about?");
+			if(GUI.Button ( Rect(x, y + height* 0 + gapSize*0 + dolphinImage.height, width, height), "Goals")) {
+				showHelpGoals = true;
+			}
+			if(GUI.Button ( Rect(x, y + height* 1 + gapSize*0 + dolphinImage.height, width, height), "Enemies")) {
+				showHelpEnemies = true;
+			}
+			if(GUI.Button ( Rect(x, y + height* 2 + gapSize*0 + dolphinImage.height, width, height), "Special powers")) {
+				showHelpPowers = true;
+			}
+			if(GUI.Button ( Rect(x, y + height* 3 + gapSize*0 + dolphinImage.height, width, height), "Nothing, sorry for calling you")) {
+				showHelp = false;
+			}
+		} else if (showHelpGoals) {
+			GUI.Label ( Rect(x, y + height* 0 + gapSize*0, width, height), "Your goals are:");
+		
+			GUI.Label ( Rect(x, y + height* 0 + gapSize*0 + dolphinImage.height, width, height), "Main goal: defeat Wolf the Evil Mastermind and take his magic carrot.");
+			GUI.Label ( Rect(x, y + height* 1 + gapSize*0 + dolphinImage.height, width, height), "Main goal: defeat at least one of Wolf's mercenaries, Mole or Bear.");
+			GUI.Label ( Rect(x, y + height* 2 + gapSize*0 + dolphinImage.height, width, height), "Extra goal: defeat Bear the Legendary Fist");
+			GUI.Label ( Rect(x, y + height* 3 + gapSize*0 + dolphinImage.height, width, height), "Extra goal: defeat Mole the Restless");
+			if(GUI.Button ( Rect(x, y + height* 4 + gapSize*1 + dolphinImage.height, width, height), "I want to know more about something else")) {
+				showHelpGoals = false;
+			}
+		} else if (showHelpEnemies) {
+			if(!showHelpEnemyWolf && !showHelpEnemyBear && !showHelpEnemyMole) {
+				GUI.Label ( Rect(x, y + height* 0 + gapSize*0, width, height), "Which enemy would you like to know more about?");
+			
+				if(GUI.Button ( Rect(x, y + height* 0 + gapSize*0 + dolphinImage.height, width, height), "Wolf the Evil Mastermind")) {
+					showHelpEnemyWolf = true;
+				}
+				if(GUI.Button ( Rect(x, y + height* 1 + gapSize*0 + dolphinImage.height, width, height), "Bear the Legendary Fist")) {
+					showHelpEnemyBear = true;
+				}
+				if(GUI.Button ( Rect(x, y + height* 2 + gapSize*0 + dolphinImage.height, width, height), "Mole the Restless")) {
+					showHelpEnemyMole = true;
+				}
+				if(GUI.Button ( Rect(x, y + height* 3 + gapSize*1 + dolphinImage.height, width, height), "I want to know more about something else")) {
+					showHelpEnemies = false;
+				}
+			} else if (showHelpEnemyWolf) {
+				GUI.Label ( Rect(x, y + height* 0 + gapSize*0, width, height), "Here's what you should know about Wolf the Evil Mastermind:");
+		
+				GUI.Label ( Rect(x, y + height* 0 + gapSize*0 + dolphinImage.height, width, height), "How to get to him: go through Mole or Bear");
+				GUI.Label ( Rect(x, y + height* 1 + gapSize*0 + dolphinImage.height, width, height), "Weakness: pride");
+				GUI.Label ( Rect(x, y + height* 2 + gapSize*0 + dolphinImage.height, width, height), "Item held: magic carrot");
+				GUI.Label ( Rect(x, y + height* 3 + gapSize*0 + dolphinImage.height, width, height), "How to defeat him: jump on his head while he's posing or trapped");
+				if(GUI.Button ( Rect(x, y + height* 4 + gapSize*1 + dolphinImage.height, width, height), "I want to know more about another enemy")) {
+					showHelpEnemyWolf = false;
+				}
+			} else if (showHelpEnemyBear) {
+				GUI.Label ( Rect(x, y + height* 0 + gapSize*0, width, height), "Here's what you should know about Bear the Legendary Fist:");
+		
+				GUI.Label ( Rect(x, y + height* 0 + gapSize*0 + dolphinImage.height, width, height), "How to get to him: go through the mountains");
+				GUI.Label ( Rect(x, y + height* 1 + gapSize*0 + dolphinImage.height, width, height), "Weakness: honey");
+				GUI.Label ( Rect(x, y + height* 2 + gapSize*0 + dolphinImage.height, width, height), "Item held: spinach");
+				GUI.Label ( Rect(x, y + height* 3 + gapSize*0 + dolphinImage.height, width, height), "How to defeat him: lure bees to his honey");
+				if(GUI.Button ( Rect(x, y + height* 4 + gapSize*1 + dolphinImage.height, width, height), "I want to know more about another enemy")) {
+					showHelpEnemyBear = false;
+				}
+			} else if (showHelpEnemyMole) {
+				GUI.Label ( Rect(x, y + height* 0 + gapSize*0, width, height), "Here's what you should know about Mole the Restless:");
+		
+				GUI.Label ( Rect(x, y + height* 0 + gapSize*0 + dolphinImage.height, width, height), "How to get to him: go through floating platforms");
+				GUI.Label ( Rect(x, y + height* 1 + gapSize*0 + dolphinImage.height, width, height), "Weakness: daylight");
+				GUI.Label ( Rect(x, y + height* 2 + gapSize*0 + dolphinImage.height, width, height), "Item held: brocolli");
+				GUI.Label ( Rect(x, y + height* 3 + gapSize*0 + dolphinImage.height, width, height), "How to defeat him: jump on his head while he's dizzy");
+				if(GUI.Button ( Rect(x, y + height* 4 + gapSize*1 + dolphinImage.height, width, height), "I want to know more about another enemy")) {
+					showHelpEnemyMole = false;
+				}
+			}
+		} else if (showHelpPowers) {
+			if(!showHelpPowerStrength && !showHelpPowerJump) {
+				GUI.Label ( Rect(x, y + height* 0 + gapSize*0, width, height), "Which special power would you like to know more about?");
+			
+				if(GUI.Button ( Rect(x, y + height* 0 + gapSize*0 + dolphinImage.height, width, height), "Strength")) {
+					showHelpPowerStrength = true;
+				}
+				if(GUI.Button ( Rect(x, y + height* 1 + gapSize*0 + dolphinImage.height, width, height), "Double Jump")) {
+					showHelpPowerJump = true;
+				}
+				if(GUI.Button ( Rect(x, y + height* 2 + gapSize*1 + dolphinImage.height, width, height), "I want to know more about something else")) {
+					showHelpPowers = false;
+				}
+			} else if (showHelpPowerStrength) {
+				GUI.Label ( Rect(x, y + height* 0 + gapSize*0, width, height), "Here's what you should know special power Strength:");
+		
+				GUI.Label ( Rect(x, y + height* 0 + gapSize*0 + dolphinImage.height, width, height), "How to get it: eat a can of spinach");
+				GUI.Label ( Rect(x, y + height* 1 + gapSize*0 + dolphinImage.height, width, height), "What does it give: ability to push boulders");
+				if(GUI.Button ( Rect(x, y + height* 2 + gapSize*1 + dolphinImage.height, width, height), "I want to know more about another special power")) {
+					showHelpPowerStrength = false;
+				}
+			} else if (showHelpPowerJump) {
+				GUI.Label ( Rect(x, y + height* 0 + gapSize*0, width, height), "Here's what you should know special power Double Jump:");
+		
+				GUI.Label ( Rect(x, y + height* 0 + gapSize*0 + dolphinImage.height, width, height), "How to get it: eat a brocolli");
+				GUI.Label ( Rect(x, y + height* 1 + gapSize*0 + dolphinImage.height, width, height), "What does it give: ability to jump higher");
+				if(GUI.Button ( Rect(x, y + height* 2 + gapSize*1 + dolphinImage.height, width, height), "I want to know more about another special power")) {
+					showHelpPowerJump = false;
+				}
+			}
+		}
 	}
 		
 	if(pause) {
