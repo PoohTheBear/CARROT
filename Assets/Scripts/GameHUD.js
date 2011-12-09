@@ -67,6 +67,7 @@ function OnGUI ()
 	var pause = playerPowerupsInfo.shouldPause;
 	var healthCount = playerHealthInfo.health;
 	var liveCount = playerHealthInfo.lives;
+	var showTutorials = playerPowerupsInfo.showTutorials;
 
 	// Our GUI is laid out for a 1920 x 1200 pixel display (16:10 aspect). The next line makes sure it rescales nicely to other resolutions.
 	GUI.matrix = Matrix4x4.TRS (Vector3(0, 0, 0), Quaternion.identity, Vector3 (Screen.height / nativeVerticalResolution, Screen.height / nativeVerticalResolution, 1)); 
@@ -84,19 +85,6 @@ function OnGUI ()
 			DrawImageTopAligned(Vector2(64*(i%10),128+(64*(i/10))), healthInactiveImage);
 	}	
 	
-	if (t < 20.0) {
-		t += Time.deltaTime;
-		var x = (Screen.width / 2);
-		var y = 200;//Screen.height - (t*scrollSpeed);
-		GUI.Label ( Rect(x - 150, y + 20, 2000, 200), "Tutorials");
-		
-		GUI.Label ( Rect(x - 150, y + 200, 2000, 200), "Žaidime siekiama nugalėti vilką ir atimti iš jo stebuklingą morką!");
-		
-		GUI.Label ( Rect(x - 150, y + 400, 2000, 200), "WASD – bėgimas ir krypties keitimas");
-		GUI.Label ( Rect(x - 150, y + 600, 2000, 200), "SPACE – šokinėjimas");
-		GUI.Label ( Rect(x - 150, y + 800, 2000, 200), "Pelės sukiojimas + pelės mygtukas - kameros valdymas");
-	}
-	
 	if (playerPowerupsInfo.canDash)
 		DrawImageTopRightAligned(coffeeBeanOffset, coffeeBeanActiveImage);
 	else
@@ -109,6 +97,27 @@ function OnGUI ()
 		DrawImageTopRightAligned(spinachOffset, spinachActiveImage);
 	else
 		DrawImageTopRightAligned(spinachOffset, spinachInactiveImage);
+		
+	if (showTutorials) {
+		t += Time.deltaTime;
+		var x = (scaledResolutionWidth / 2);
+		var y = Screen.height - t*20;
+		GUI.Label ( Rect(x - 150, y + 20, scaledResolutionWidth - 300, 100), "Hello there, Rabbit the Hermit!");
+		GUI.Label ( Rect(x - 150, y + 120, scaledResolutionWidth - 300, 100), "I know of your intentions and I'm here to help you.");
+		GUI.Label ( Rect(x - 150, y + 220, scaledResolutionWidth - 300, 100), "Take this phone should you need any more help later.");
+		
+		GUI.Label ( Rect(x - 150, y + 370, scaledResolutionWidth - 300, 100), "These are your goals:");
+		
+		GUI.Label ( Rect(x - 150, y + 470, scaledResolutionWidth - 300, 100), "Main goal: defeat Wolf the Evil Mastermind Snob and take his magic carrot.");
+		GUI.Label ( Rect(x - 150, y + 570, scaledResolutionWidth - 300, 100), "Main goal: defeat at least one of Wolf's mercenaries, Mole or Bear.");
+		GUI.Label ( Rect(x - 150, y + 670, scaledResolutionWidth - 300, 100), "Extra goal: defeat Bear the Legendary Fist");
+		GUI.Label ( Rect(x - 150, y + 770, scaledResolutionWidth - 300, 100), "Extra goal: defeat Mole the Restless");
+		
+		GUI.Label ( Rect(x - 150, y + 920, scaledResolutionWidth - 300, 100), "Controls:");
+		GUI.Label ( Rect(x - 150, y + 1020, scaledResolutionWidth - 300, 100), "WASD or Arrow Keys – movement");
+		GUI.Label ( Rect(x - 150, y + 1120, scaledResolutionWidth - 300, 100), "SPACE – jump");
+		GUI.Label ( Rect(x - 150, y + 1220, scaledResolutionWidth - 300, 100), "Mouse click + mouse movement - camera rotation");
+	}
 		
 	if(pause) {
 		Time.timeScale = 0;
