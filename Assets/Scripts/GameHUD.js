@@ -22,6 +22,13 @@ var brocolliActiveImage: Texture2D;
 var brocolliInactiveImage: Texture2D;
 var brocolliOffset = Vector2(0, 0);
 
+//dolphin
+var dolphinImage: Texture2D;
+var dolphinOffset = Vector2(0, 0);
+var phoneActiveImage: Texture2D;
+var phoneInactiveImage: Texture2D;
+var phoneOffset = Vector2(0, 0);
+
 var scrollSpeed = 1.0;
 private var t = 0.0;
 var background : Texture2D;
@@ -100,23 +107,27 @@ function OnGUI ()
 		
 	if (showTutorials) {
 		t += Time.deltaTime;
-		var x = (scaledResolutionWidth / 2);
+		var x = (scaledResolutionWidth / 2) + dolphinOffset.x - 150;
 		var y = Screen.height - t*20;
-		GUI.Label ( Rect(x - 150, y + 20, scaledResolutionWidth - 300, 100), "Hello there, Rabbit the Hermit!");
-		GUI.Label ( Rect(x - 150, y + 120, scaledResolutionWidth - 300, 100), "I know of your intentions and I'm here to help you.");
-		GUI.Label ( Rect(x - 150, y + 220, scaledResolutionWidth - 300, 100), "Take this phone should you need any more help later.");
+		var width = scaledResolutionWidth - 300 - dolphinImage.width;
+		var height = 100;
+		var gapSize = 50;
+		DrawImageTopAligned(dolphinOffset, dolphinImage);
+		GUI.Label ( Rect(x, y + height* 0 + gapSize*0, width, height), "Hello there, Rabbit the Hermit!");
+		GUI.Label ( Rect(x, y + height* 1 + gapSize*0, width, height), "I know of your intentions and I'm here to help you.");
+		GUI.Label ( Rect(x, y + height* 2 + gapSize*0, width, height), "Take this phone should you need any more help later.");
 		
-		GUI.Label ( Rect(x - 150, y + 370, scaledResolutionWidth - 300, 100), "These are your goals:");
+		GUI.Label ( Rect(x, y + height* 3 + gapSize*1, width, height), "These are your goals:");
 		
-		GUI.Label ( Rect(x - 150, y + 470, scaledResolutionWidth - 300, 100), "Main goal: defeat Wolf the Evil Mastermind Snob and take his magic carrot.");
-		GUI.Label ( Rect(x - 150, y + 570, scaledResolutionWidth - 300, 100), "Main goal: defeat at least one of Wolf's mercenaries, Mole or Bear.");
-		GUI.Label ( Rect(x - 150, y + 670, scaledResolutionWidth - 300, 100), "Extra goal: defeat Bear the Legendary Fist");
-		GUI.Label ( Rect(x - 150, y + 770, scaledResolutionWidth - 300, 100), "Extra goal: defeat Mole the Restless");
+		GUI.Label ( Rect(x, y + height* 4 + gapSize*1, width, height), "Main goal: defeat Wolf the Evil Mastermind Snob and take his magic carrot.");
+		GUI.Label ( Rect(x, y + height* 5 + gapSize*1, width, height), "Main goal: defeat at least one of Wolf's mercenaries, Mole or Bear.");
+		GUI.Label ( Rect(x, y + height* 6 + gapSize*1, width, height), "Extra goal: defeat Bear the Legendary Fist");
+		GUI.Label ( Rect(x, y + height* 7 + gapSize*1, width, height), "Extra goal: defeat Mole the Restless");
 		
-		GUI.Label ( Rect(x - 150, y + 920, scaledResolutionWidth - 300, 100), "Controls:");
-		GUI.Label ( Rect(x - 150, y + 1020, scaledResolutionWidth - 300, 100), "WASD or Arrow Keys – movement");
-		GUI.Label ( Rect(x - 150, y + 1120, scaledResolutionWidth - 300, 100), "SPACE – jump");
-		GUI.Label ( Rect(x - 150, y + 1220, scaledResolutionWidth - 300, 100), "Mouse click + mouse movement - camera rotation");
+		GUI.Label ( Rect(x, y + height* 8 + gapSize*2, width, height), "Controls:");
+		GUI.Label ( Rect(x, y + height* 9 + gapSize*2, width, height), "WASD or Arrow Keys – movement");
+		GUI.Label ( Rect(x, y + height*10 + gapSize*2, width, height), "SPACE – jump");
+		GUI.Label ( Rect(x, y + height*11 + gapSize*2, width, height), "Mouse click + mouse movement - camera rotation");
 	}
 		
 	if(pause) {
