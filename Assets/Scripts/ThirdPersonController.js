@@ -94,6 +94,9 @@ var canPunch = true;
 private var onBossPlatform = false;
 private var boss: GameObject = null;
 private var lastPlatformOn: int = 0;
+var showTutorials = false;
+var pause = false;
+var showHelp = false;
 
 function Awake ()
 {
@@ -336,6 +339,14 @@ function Update() {
 	{
 		// kill all inputs if not controllable.
 		Input.ResetInputAxes();
+	}
+	
+	if(Input.GetButtonDown("Pause") && !showHelp) {
+		pause = !pause;
+	}
+	
+	if(Input.GetButtonDown("Help") && !pause) {
+		showHelp = !showHelp;
 	}
 
 	if (Input.GetButtonDown ("Jump"))
