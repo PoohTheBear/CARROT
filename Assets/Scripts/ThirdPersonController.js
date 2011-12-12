@@ -82,18 +82,19 @@ private var slammed = false;
 
 private var isControllable = true;
 
-var canDoubleJump = true;
+var canDoubleJump = false;
 private var jumpsAvailable = 0;
 private var didDoubleJump = false;
-var canDash = true;
+var canDash = false;
 private var startedDashing = 0.0;
 private var didDash = false;
 private var lastVerticalButtonPressed = 0.0;
 private var lastVerticalValue = 0.0;
-var canPunch = true;
+var canPunch = false;
 private var onBossPlatform = false;
 private var boss: GameObject = null;
 private var lastPlatformOn: int = 0;
+var canCallHelp = false;
 var showTutorials = false;
 var pause = false;
 var showHelp = false;
@@ -345,7 +346,7 @@ function Update() {
 		pause = !pause;
 	}
 	
-	if(Input.GetButtonDown("Help") && !pause) {
+	if(Input.GetButtonDown("Help") && !pause && canCallHelp) {
 		showHelp = !showHelp;
 	}
 

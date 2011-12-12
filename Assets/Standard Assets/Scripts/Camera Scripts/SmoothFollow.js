@@ -75,46 +75,14 @@ function LateUpdate () {
 		correctedDistance = Vector3.Distance(trueTargetPosition, position);
 		isCorrected = true;
 	}
-	/*if(!isCorrected || correctedDistance > currentDistance)
+	if(!isCorrected || correctedDistance > currentDistance)
 		currentDistance = Mathf.Lerp(currentDistance, correctedDistance, Time.deltaTime * zoomDamping);
 	else
-		currentDistance = correctedDistance;*/
+		currentDistance = correctedDistance;
 		
-	currentDistance = distance;
 	position = target.position - (rotation * Vector3.forward * currentDistance + Vector3(0,-height,0));
 	
 	
 	transform.rotation = rotation;
 	transform.position = position;
-	/*
-	// Damp the rotation around the y-axis
-	currentRotationAngle = Mathf.LerpAngle (currentRotationAngle, wantedRotationAngle, rotationDamping * Time.deltaTime);
-
-	// Damp the height
-	currentHeight = Mathf.Lerp (currentHeight, wantedHeight, heightDamping * Time.deltaTime);
-
-	// Convert the angle into a rotation
-	var currentRotation = Quaternion.Euler (0, currentRotationAngle, 0);
-	
-	// Set the position of the camera on the x-z plane to:
-	// distance meters behind the target
-	transform.position = target.position;
-	transform.position -= currentRotation * Vector3.forward * distance;
-	
-	// Set the height of the camera
-	transform.position.y = currentHeight;
-	
-	// Always look at the target
-	//transform.rotation = target.rotation;
-	transform.LookAt (target);*/
-}
-
-function OnTriggerEnter(other: Collider) {
-	//var offset = target.position - transform.position;
-	//currentDistance = offset.magnitude;
-	//moveCloser = true;
-}
-
-function OnTriggerExit(other: Collider) {
-	//moveCloser = false;
 }

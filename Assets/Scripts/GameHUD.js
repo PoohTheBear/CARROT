@@ -114,18 +114,22 @@ function OnGUI ()
 			DrawImageTopAligned(Vector2(64*(i%10),128+(64*(i/10))), healthInactiveImage);
 	}	
 	
-	if (playerPowerupsInfo.canDash)
+	if (playerPowerupsInfo.canDash && coffeeBeanActiveImage != null)
 		DrawImageTopRightAligned(coffeeBeanOffset, coffeeBeanActiveImage);
-	else
+	else if(coffeeBeanInactiveImage != null)
 		DrawImageTopRightAligned(coffeeBeanOffset, coffeeBeanInactiveImage);
-	if (playerPowerupsInfo.canDoubleJump)
+	if (playerPowerupsInfo.canDoubleJump && brocolliActiveImage != null)
 		DrawImageTopRightAligned(brocolliOffset, brocolliActiveImage);
-	else
+	else if(brocolliInactiveImage != null)
 		DrawImageTopRightAligned(brocolliOffset, brocolliInactiveImage);
-	if (playerPowerupsInfo.canPunch)
+	if (playerPowerupsInfo.canPunch && spinachActiveImage != null)
 		DrawImageTopRightAligned(spinachOffset, spinachActiveImage);
-	else
+	else if(spinachInactiveImage != null)
 		DrawImageTopRightAligned(spinachOffset, spinachInactiveImage);
+	if (playerPowerupsInfo.canCallHelp && phoneActiveImage != null)
+		DrawImageTopRightAligned(phoneOffset, phoneActiveImage);
+	else if(phoneInactiveImage != null)
+		DrawImageTopRightAligned(phoneOffset, phoneInactiveImage);
 		
 	var x;
 	var y;
