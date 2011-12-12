@@ -1,13 +1,11 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\TalkToDolphin.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\BeesAI.js">
     <Files>
-      <File FileName="Assets\Scripts\GameHUD.js" Line="190" Column="142" />
-      <File FileName="Assets\Scripts\ThirdPersonController.js" Line="336" Column="20" />
-      <File FileName="Assets\Standard Assets\Scripts\Camera Scripts\SmoothFollow.js" Line="83" Column="29" />
-      <File FileName="Assets\Scripts\ThirdPersonStatus.js" Line="102" Column="14" />
-      <File FileName="Assets\Scripts\FalloutDeath.js" Line="17" Column="38" />
-      <File FileName="Assets\Scripts\TalkToDolphin.js" Line="12" Column="2" />
+      <File FileName="Assets\Scripts\TalkToDolphin.js" Line="4" Column="82" />
+      <File FileName="Assets\Standard Assets\Scripts\Camera Scripts\SmoothFollow.js" Line="73" Column="68" />
+      <File FileName="Assets\Scripts\GameHUD.js" Line="125" Column="27" />
+      <File FileName="Assets\Scripts\BeesAI.js" Line="101" Column="46" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
