@@ -1,9 +1,9 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\BeesAI.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Standard Assets\Scripts\Camera Scripts\SmoothFollow.js">
     <Files>
+      <File FileName="Assets\Standard Assets\Scripts\Camera Scripts\SmoothFollow.js" Line="36" Column="19" />
       <File FileName="Assets\Scripts\TalkToDolphin.js" Line="4" Column="82" />
-      <File FileName="Assets\Standard Assets\Scripts\Camera Scripts\SmoothFollow.js" Line="73" Column="68" />
       <File FileName="Assets\Scripts\GameHUD.js" Line="125" Column="27" />
       <File FileName="Assets\Scripts\BeesAI.js" Line="101" Column="46" />
     </Files>

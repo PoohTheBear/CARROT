@@ -11,6 +11,7 @@ Then we apply the smoothed values to the transform's position.
 
 // The target we are following
 var target : Transform;
+var subCamera: GameObject;
 // The distance in the x-z plane to the target
 var distance = 10.0;
 // the height we want the camera to be above the target
@@ -34,6 +35,8 @@ private var x = 0.0;
 function Start() {
     x = rotationX;
     y = transform.eulerAngles.y;
+    subCamera.camera.enabled = false;
+    subCamera.camera.enabled = true;
 }
 
 
