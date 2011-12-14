@@ -280,11 +280,11 @@ function OnGUI ()
 	if(pause) {
 		Time.timeScale = 0;
 		if (GUI.Button( Rect ((scaledResolutionWidth / 2) - 150, (nativeVerticalResolution / 2) - 160, 300, 100),"Resume")) {
-			playerPowerupsInfo.shouldPause = false;
+			playerPowerupsInfo.pause = false;
 			Time.timeScale = timeScale;
 		}
 		if (GUI.Button( Rect ((scaledResolutionWidth / 2) - 150, (nativeVerticalResolution / 2) - 50, 300, 100),"Main Menu")) {
-			playerPowerupsInfo.shouldPause = false;
+			playerPowerupsInfo.pause = false;
 			Time.timeScale = timeScale;
 			Application.LoadLevel("StartMenu");
 		}
